@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Short Series & Stories 3D Studio</title>
+    <title>Series & Story Cinematic Studio 3D</title>
     <style>
         * {
             box-sizing: border-box;
@@ -234,8 +234,8 @@
 
     <header>
         <div class="logo-title">
-            <h1>🎬 Series & Story 3D Studio</h1>
-            <p>Live Visual Animation & Voiceover</p>
+            <h1>🎬 Series & Story Cinematic Studio 3D</h1>
+            <p>Advanced 3D Visuals & Natural Voiceover</p>
         </div>
         <div class="nav-btns">
             <button class="btn btn-primary" onclick="showTab('editor')">📝 Script Editor</button>
@@ -252,7 +252,7 @@
                         <h2>Series Settings</h2>
                         <div class="form-group">
                             <label>Series Title</label>
-                            <input type="text" id="series-title" value="The Great Escape Adventure">
+                            <input type="text" id="series-title" value="Cinematic Universe Adventures">
                         </div>
                         <div class="form-group">
                             <label>Display & Audio Mode</label>
@@ -265,31 +265,31 @@
                     </div>
 
                     <div class="card">
-                        <h2>Add Live Visual Scene (30+ Secs)</h2>
+                        <h2>Add Cinematic Scene (30+ Secs)</h2>
                         <div class="form-group">
-                            <label>Visual Animation Type</label>
+                            <label>Cinematic Visual Theme (3D Motion)</label>
                             <select id="scene-type">
-                                <option value="running">🏃 Running Character & Chase Action</option>
-                                <option value="space">🚀 Deep Space Galaxy & Planets</option>
-                                <option value="fantasy">🏰 Magical Castle & Floating Orbs</option>
-                                <option value="cyber">🌆 Cyberpunk Neon City</option>
+                                <option value="cyber">🌆 Cyberpunk Neon City Chase & Lights</option>
+                                <option value="space">🚀 Deep Space Wormhole & Starfield Warp</option>
+                                <option value="fantasy">🏰 Ancient Magical Floating Citadel</option>
+                                <option value="nature">🌲 Mystic Forest & Glowing Orbs</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Scene Visual Title</label>
-                            <textarea id="scene-desc" rows="2" placeholder="Describe visual scene..."></textarea>
+                            <label>Scene Title</label>
+                            <textarea id="scene-desc" rows="2" placeholder="Scene title or visual description..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>Duration in Seconds (20-30s+ for long shorts)</label>
-                            <input type="number" id="scene-duration" value="20" min="5" max="60">
+                            <input type="number" id="scene-duration" value="25" min="5" max="60">
                         </div>
                         <div class="form-group">
                             <label>🔊 Spoken Voiceover Text</label>
-                            <textarea id="scene-spoken-text" rows="3" placeholder="Text spoken by voice engine..."></textarea>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="Text to be read naturally by voice engine..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>💬 Subtitle Text (Bottom Screen)</label>
-                            <textarea id="scene-sub-text" rows="3" placeholder="Subtitle text..."></textarea>
+                            <textarea id="scene-sub-text" rows="3" placeholder="Subtitles shown at bottom..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Scene</button>
@@ -334,8 +334,8 @@
                     </div>
                     <div>
                         <select id="voice-lang" onchange="changeLang()" style="background:#0b0f19; color:#fff; border:1px solid #1e2d4a; padding:6px; border-radius:6px; font-size:0.8rem;">
-                            <option value="en-US">Voice: English 🇺🇸</option>
-                            <option value="ar-SA">Voice: Arabic 🇸🇦</option>
+                            <option value="en-US">Voice Language: English 🇺🇸</option>
+                            <option value="ar-SA">Voice Language: Arabic 🇸🇦</option>
                         </select>
                     </div>
                 </div>
@@ -348,30 +348,30 @@
         let currentIndex = 0;
         let isPlaying = false;
         let playTimer = null;
-        let currentLang = 'en-US';
         let canvas, ctx, animFrameId;
+        let particles = [];
 
         const trendingIdeas = [
             {
-                type: "running",
-                desc: "An intense escape run through the dark cyber forest",
+                type: "cyber",
+                desc: "High-speed cyber city chase through neon tunnels",
                 duration: 25,
-                spokenText: "He ran with all his might as shadows chased him through the dark forest. There was no time to look back; survival was the only option left.",
-                subText: "Run faster! The dark shadows are closing in..."
+                spokenText: "The neon lights flashed as the digital chase accelerated through the quantum grid. There was no looking back in this cyberpunk metropolis.",
+                subText: "Speeding through the neon grid... System breach detected!"
             },
             {
                 type: "space",
-                desc: "Deep space warp jump into an alternate dimension",
+                desc: "Warp speed travel across multi-dimensional galaxies",
                 duration: 25,
-                spokenText: "Traveling at warp speed through deep space anomalies. Welcome to the parallel universe where time stands completely still.",
-                subText: "Wormhole stabilized. Entering galaxy X..."
+                spokenText: "Entering the superluminal wormhole where stars bend and galaxies collide in an breathtaking display of cosmic energy.",
+                subText: "Wormhole jump initiated. Destination: Unknown sector."
             },
             {
                 type: "fantasy",
-                desc: "Unlocking the gates of the ancient floating castle",
+                desc: "The awakening of the ancient floating magical citadel",
                 duration: 25,
-                spokenText: "High above the clouds, the legendary castle awaits those brave enough to turn the golden key of destiny.",
-                subText: "The ancient secrets of magic are finally revealed."
+                spokenText: "High above the stormy skies, ancient runes glowed as the magical citadel rose to claim its eternal glory.",
+                subText: "The gates of the floating citadel are now open."
             }
         ];
 
@@ -379,6 +379,7 @@
             canvas = document.getElementById('anim-canvas');
             ctx = canvas.getContext('2d');
             resizeCanvas();
+            initParticles();
             loadTrendingIdea();
         };
 
@@ -389,6 +390,19 @@
             const parent = canvas.parentElement;
             canvas.width = parent.clientWidth || 380;
             canvas.height = parent.clientHeight || 675;
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * 500,
+                    y: Math.random() * 800,
+                    size: Math.random() * 3 + 1,
+                    speed: Math.random() * 2 + 0.5,
+                    color: ['#38bdf8', '#f43f5e', '#fbbf24', '#a855f7'][Math.floor(Math.random() * 4)]
+                });
+            }
         }
 
         function loadTrendingIdea() {
@@ -405,7 +419,7 @@
             const spokenText = document.getElementById('scene-spoken-text').value.trim();
             const subText = document.getElementById('scene-sub-text').value.trim();
             const type = document.getElementById('scene-type').value;
-            const duration = parseInt(document.getElementById('scene-duration').value) || 20;
+            const duration = parseInt(document.getElementById('scene-duration').value) || 25;
 
             if (!desc) {
                 alert("Please enter a scene description!");
@@ -523,10 +537,10 @@
                 speak(sc.spokenText);
             }
 
-            startVisualLoop(sc.type);
+            startCinematicVisuals(sc.type);
         }
 
-        function startVisualLoop(type) {
+        function startCinematicVisuals(type) {
             if (animFrameId) cancelAnimationFrame(animFrameId);
             
             function draw() {
@@ -536,70 +550,63 @@
                 const w = canvas.width;
                 const h = canvas.height;
 
-                if (type === 'running') {
-                    // Background
-                    ctx.fillStyle = '#0f172a';
-                    ctx.fillRect(0, 0, w, h);
-
-                    // Ground moving lines
-                    ctx.fillStyle = '#1e293b';
-                    ctx.fillRect(0, h - 90, w, 90);
-                    ctx.fillStyle = '#334155';
-                    let offset = (Date.now() * 0.3) % 40;
-                    for (let x = -offset; x < w; x += 40) {
-                        ctx.fillRect(x, h - 90, 20, 5);
-                    }
-
-                    // Running Character Animation (Clear stickman/runner in action)
-                    const rx = w / 2;
-                    const ry = h - 140;
-
-                    // Head
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.beginPath(); ctx.arc(rx, ry - 30, 14, 0, Math.PI * 2); ctx.fill();
-                    // Body
-                    ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 5;
-                    ctx.beginPath(); ctx.moveTo(rx, ry - 16); ctx.lineTo(rx, ry + 25); ctx.stroke();
-                    // Arms swinging
-                    const armAngle = Math.sin(Date.now() * 0.02) * 20;
-                    ctx.beginPath();
-                    ctx.moveTo(rx, ry - 5); ctx.lineTo(rx - 20 + armAngle, ry + 10);
-                    ctx.moveTo(rx, ry - 5); ctx.lineTo(rx + 20 - armAngle, ry + 10);
-                    ctx.stroke();
-                    // Legs running animation
-                    const legAngle = Math.sin(Date.now() * 0.02) * 25;
-                    ctx.beginPath();
-                    ctx.moveTo(rx, ry + 25); ctx.lineTo(rx - 22 + legAngle, ry + 70);
-                    ctx.moveTo(rx, ry + 25); ctx.lineTo(rx + 22 - legAngle, ry + 70);
-                    ctx.stroke();
-
+                // Dynamic Background Gradient
+                let gradient = ctx.createLinearGradient(0, 0, 0, h);
+                if (type === 'cyber') {
+                    gradient.addColorStop(0, '#090d16');
+                    gradient.addColorStop(1, '#1e1b4b');
                 } else if (type === 'space') {
-                    ctx.fillStyle = '#020617';
-                    ctx.fillRect(0, 0, w, h);
-                    ctx.fillStyle = '#ffffff';
-                    for(let i=0; i<70; i++) {
-                        let sx = (i * 37 + Date.now() * 0.1) % w;
-                        let sy = (i * 53) % h;
-                        ctx.fillRect(sx, sy, 3, 3);
-                    }
-                    // Planet
-                    ctx.fillStyle = '#3b82f6';
-                    ctx.beginPath(); ctx.arc(w / 2, h / 2, 75, 0, Math.PI * 2); ctx.fill();
-                    // Ring
-                    ctx.strokeStyle = '#93c5fd'; ctx.lineWidth = 6;
-                    ctx.beginPath(); ctx.ellipse(w / 2, h / 2, 110, 35, Math.PI / 6, 0, Math.PI * 2); ctx.stroke();
-
+                    gradient.addColorStop(0, '#020617');
+                    gradient.addColorStop(1, '#0f172a');
+                } else if (type === 'fantasy') {
+                    gradient.addColorStop(0, '#1e1b4b');
+                    gradient.addColorStop(1, '#3b0764');
                 } else {
-                    ctx.fillStyle = '#311042';
-                    ctx.fillRect(0, 0, w, h);
-                    ctx.fillStyle = '#fbbf24';
-                    ctx.font = "bold 45px sans-serif";
-                    ctx.textAlign = "center";
-                    ctx.fillText("🏰 ✨", w / 2, h / 2 - 10);
-                    ctx.font = "16px sans-serif";
-                    ctx.fillStyle = "#e2e8f0";
-                    ctx.fillText("Magical Castle & Floating Realm", w / 2, h / 2 + 30);
+                    gradient.addColorStop(0, '#064e3b');
+                    gradient.addColorStop(1, '#022c22');
                 }
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, w, h);
+
+                // Advanced Cinematic Particles & 3D Depth Elements
+                particles.forEach((p, index) => {
+                    p.y += p.speed;
+                    if (p.y > h) p.y = 0;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * (type === 'space' ? 1.5 : 1), 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Central Cinematic 3D Visual Object (Glowing Core / Hologram / Portal)
+                const time = Date.now() * 0.002;
+                const cx = w / 2;
+                const cy = h / 2;
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(time * 0.5);
+
+                // Outer Glowing Rings
+                for (let r = 3; r > 0; r--) {
+                    ctx.strokeStyle = type === 'cyber' ? '#38bdf8' : (type === 'space' ? '#818cf8' : '#fbbf24');
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 50 + r * 25 + Math.sin(time + r) * 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Center Core Sphere
+                const coreGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 45);
+                coreGrad.addColorStop(0, '#ffffff');
+                coreGrad.addColorStop(0.5, type === 'cyber' ? '#06b6d4' : '#f43f5e');
+                coreGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = coreGrad;
+                ctx.beginPath();
+                ctx.arc(0, 0, 45 + Math.sin(time * 2) * 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
 
                 animFrameId = requestAnimationFrame(draw);
             }
@@ -641,14 +648,23 @@
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const speech = new SpeechSynthesisUtterance(text);
-                speech.lang = currentLang;
-                speech.rate = 0.9;
+                
+                // Smart Language Engine Mapping
+                const selectedLangOption = document.getElementById('voice-lang').value;
+                if (selectedLangOption === 'ar-SA' && /[\u0600-\u06FF]/.test(text)) {
+                    speech.lang = 'ar-SA';
+                } else if (selectedLangOption === 'en-US') {
+                    speech.lang = 'en-US';
+                } else {
+                    speech.lang = selectedLangOption;
+                }
+
+                speech.rate = 0.95;
                 window.speechSynthesis.speak(speech);
             }
         }
 
         function changeLang() {
-            currentLang = document.getElementById('voice-lang').value;
             if (scenes.length > 0) renderFrame();
         }
 
