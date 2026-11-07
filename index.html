@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Shorts Studio Pro</title>
+    <title>True 3D Cinematic Shorts Studio</title>
     <style>
         * {
             box-sizing: border-box;
@@ -159,13 +159,16 @@
             align-items: center;
             border: 2px solid #e11d48;
             box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3);
-            background-size: cover;
-            background-position: center;
-            transition: background-image 0.5s ease-in-out;
         }
         .screen.landscape {
             max-width: 640px;
             aspect-ratio: 16/9;
+        }
+
+        #three-canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
         }
 
         .screen-ratio-btn {
@@ -230,17 +233,19 @@
             display: none !important;
         }
     </style>
+    <!-- Three.js 3D Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
     <header>
         <div class="logo-title">
-            <h1>🎬 Cinematic Shorts Studio Pro</h1>
-            <p>Dynamic Visual Scenes & Deep Male Voiceover</p>
+            <h1>🎬 True 3D Cinematic Shorts Studio</h1>
+            <p>Real 3D Graphics, Deep Voice & Subtitles</p>
         </div>
         <div class="nav-btns">
             <button class="btn btn-primary" onclick="showTab('editor')">📝 Script Editor</button>
-            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ Play Series</button>
+            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ Play Series 3D</button>
         </div>
     </header>
 
@@ -253,44 +258,43 @@
                         <h2>Series Settings</h2>
                         <div class="form-group">
                             <label>Series Title</label>
-                            <input type="text" id="series-title" value="Epic Cinematic Shorts">
+                            <input type="text" id="series-title" value="Epic 3D Cinematic Shorts">
                         </div>
                     </div>
 
                     <div class="card">
-                        <h2>Add Dynamic Visual Scene (30+ Secs)</h2>
+                        <h2>Add 3D Scene (30+ Secs)</h2>
                         <div class="form-group">
-                            <label>Cinematic Visual Theme</label>
+                            <label>3D World Environment</label>
                             <select id="scene-theme">
-                                <option value="space">🚀 Deep Space Galaxy Warp</option>
-                                <option value="cyber">🌆 Cyberpunk Neon City Chase</option>
-                                <option value="fantasy">🏰 Ancient Magical Fantasy Castle</option>
-                                <option value="nature">🌲 Mysterious Dark Forest</option>
+                                <option value="space">🚀 3D Space Galaxy & Rotating Planets</option>
+                                <option value="cyber">🌆 3D Cyberpunk City Grid & Neon Towers</option>
+                                <option value="fantasy">🏰 3D Magical Floating Castle & Orbs</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Scene Title / Heading</label>
-                            <textarea id="scene-desc" rows="2" placeholder="Scene heading..."></textarea>
+                            <label>Scene Title</label>
+                            <textarea id="scene-desc" rows="2" placeholder="Scene title..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Duration in Seconds (25-30s+ for long shorts)</label>
+                            <label>Duration in Seconds (25-30s+)</label>
                             <input type="number" id="scene-duration" value="25" min="5" max="60">
                         </div>
                         <div class="form-group">
                             <label>🔊 Deep Male Voiceover Text (English)</label>
-                            <textarea id="scene-spoken-text" rows="3" placeholder="Voice text in English..."></textarea>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="Voice text..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>💬 Subtitle Text (Shown on Screen)</label>
-                            <textarea id="scene-sub-text" rows="3" placeholder="Subtitles in English..."></textarea>
+                            <textarea id="scene-sub-text" rows="3" placeholder="Subtitles..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>🎵 Upload Custom Audio (Optional: MP3/WAV)</label>
                             <input type="file" id="custom-audio-file" accept="audio/*">
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Scene</button>
-                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 Ready Story Idea</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add 3D Scene</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 Ready 3D Story Idea</button>
                         </div>
                     </div>
                 </div>
@@ -317,13 +321,14 @@
                     <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 YouTube Landscape (16:9)</button>
                 </div>
                 <div class="screen" id="main-screen">
+                    <canvas id="three-canvas"></canvas>
                     <div id="scene-title-overlay" class="scene-overlay-title"></div>
                     <div id="play-sub" class="subtitles">...</div>
                 </div>
 
                 <div class="controls">
                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">Play ▶️</button>
+                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">Play 3D ▶️</button>
                         <button class="btn" style="background:#16a34a;" id="record-btn" onclick="toggleRecord()">🔴 Record & Download</button>
                         <button class="btn" onclick="prevScene()">Prev</button>
                         <button class="btn" onclick="nextScene()">Next</button>
@@ -340,57 +345,114 @@
         let playTimer = null;
         let currentAudioPlayer = null;
 
-        // Dynamic theme images array for shifting visuals matching story flow
-        const themeImages = {
-            space: [
-                "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1543722530-d2c3201371e7?q=80&w=1000&auto=format&fit=crop"
-            ],
-            cyber: [
-                "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1000&auto=format&fit=crop"
-            ],
-            fantasy: [
-                "https://images.unsplash.com/photo-1514539079130-25950c84af65?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop"
-            ],
-            nature: [
-                "https://images.unsplash.com/photo-1511497584788-8767611925b4?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1000&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000&auto=format&fit=crop"
-            ]
-        };
+        // Three.js 3D Variables
+        let scene3D, camera3D, renderer3D, anim3DId;
+        let meshGroup = new THREE.Group();
 
         const trendingIdeas = [
             {
                 theme: "cyber",
-                desc: "The Cyberpunk Runner's Escape",
+                desc: "The Cyberpunk Neon Grid Chase",
                 duration: 25,
-                spokenText: "Running through the neon-lit alleys while corporate drones track every single move. There is no turning back now.",
+                spokenText: "Running for survival through the quantum cyber grid while digital neon towers rise and fall in a dystopian world.",
                 subText: "Running for survival through the neon grid..."
             },
             {
                 theme: "space",
-                desc: "Journey Into The Unknown Galaxy",
+                desc: "Deep Space Wormhole Warp",
                 duration: 25,
-                spokenText: "We crossed the event horizon into a parallel universe where time and space merge together.",
-                subText: "Entering deep space wormhole..."
+                spokenText: "Traveling at superluminal speed across rotating 3D planets and infinite starfields into an alternate dimension.",
+                subText: "Wormhole jump initiated. Entering galaxy X..."
             },
             {
                 theme: "fantasy",
-                desc: "The Secrets of the Floating Citadel",
+                desc: "The Magical Floating Citadel",
                 duration: 25,
-                spokenText: "High above the clouds, ancient magic awakens to choose its true guardian.",
-                subText: "Unlocking ancient magical secrets..."
+                spokenText: "High above the clouds, ancient magical structures and floating crystal spheres reveal the secrets of destiny.",
+                subText: "Unlocking ancient magical 3D secrets..."
             }
         ];
 
         window.onload = function() {
+            init3DEngine();
             loadTrendingIdea();
         };
+
+        function init3DEngine() {
+            const canvas = document.getElementById('three-canvas');
+            renderer3D = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer3D.setSize(380, 675);
+            renderer3D.setPixelRatio(window.devicePixelRatio);
+
+            scene3D = new THREE.Scene();
+            camera3D = new THREE.PerspectiveCamera(60, 380 / 675, 0.1, 1000);
+            camera3D.position.z = 12;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene3D.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xf43f5e, 2);
+            dirLight.position.set(5, 10, 7);
+            scene3D.add(dirLight);
+
+            scene3D.add(meshGroup);
+        }
+
+        function build3DWorld(theme) {
+            while(meshGroup.children.length > 0) {
+                meshGroup.remove(meshGroup.children[0]);
+            }
+
+            if (theme === 'space') {
+                scene3D.background = new THREE.Color(0x020617);
+                const planetGeo = new THREE.SphereGeometry(3, 32, 32);
+                const planetMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.3, metalness: 0.4 });
+                const planet = new THREE.Mesh(planetGeo, planetMat);
+                meshGroup.add(planet);
+
+                const ringGeo = new THREE.RingGeometry(4.2, 5.8, 32);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x93c5fd, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 3;
+                planet.add(ring);
+
+            } else if (theme === 'cyber') {
+                scene3D.background = new THREE.Color(0x09090b);
+                for(let i = -3; i <= 3; i += 1.8) {
+                    const bGeo = new THREE.BoxGeometry(1.2, Math.random() * 7 + 3, 1.2);
+                    const bMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, wireframe: true });
+                    const b = new THREE.Mesh(bGeo, bMat);
+                    b.position.set(i * 1.5, -1, Math.random() * -3);
+                    meshGroup.add(b);
+                }
+
+            } else if (theme === 'fantasy') {
+                scene3D.background = new THREE.Color(0x2e1065);
+                const castleGeo = new THREE.BoxGeometry(2.5, 3.5, 2.5);
+                const castleMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.8 });
+                const castle = new THREE.Mesh(castleGeo, castleMat);
+                meshGroup.add(castle);
+
+                for(let i = 0; i < 5; i++) {
+                    const orbGeo = new THREE.SphereGeometry(0.35, 16, 16);
+                    const orbMat = new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0x8b5cf6 });
+                    const orb = new THREE.Mesh(orbGeo, orbMat);
+                    orb.position.set(Math.sin(i)*3.5, Math.cos(i)*2, Math.sin(i*2)*2);
+                    meshGroup.add(orb);
+                }
+            }
+        }
+
+        function animate3D() {
+            if (!isPlaying) return;
+            anim3DId = requestAnimationFrame(animate3D);
+
+            meshGroup.rotation.y += 0.01;
+            meshGroup.rotation.x = Math.sin(Date.now() * 0.001) * 0.15;
+            camera3D.position.z = 10 + Math.sin(Date.now() * 0.0015) * 1.5;
+
+            renderer3D.render(scene3D, camera3D);
+        }
 
         function loadTrendingIdea() {
             const random = trendingIdeas[Math.floor(Math.random() * trendingIdeas.length)];
@@ -447,7 +509,7 @@
             list.innerHTML = scenes.map((sc, i) => `
                 <div class="scene-item">
                     <div class="scene-info">
-                        <strong>Scene #${i + 1} (${sc.duration}s - ${sc.theme})</strong>
+                        <strong>3D Scene #${i + 1} (${sc.duration}s - ${sc.theme})</strong>
                         <p>${sc.desc} ${sc.audioUrl ? '🎵 (Custom Audio)' : ''}</p>
                     </div>
                     <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
@@ -467,11 +529,18 @@
 
         function setAspectRatio(ratio) {
             const screen = document.getElementById('main-screen');
+            const w = ratio === '16/9' ? 640 : 380;
+            const h = ratio === '16/9' ? 360 : 675;
+
             if (ratio === '16/9') {
                 screen.classList.add('landscape');
             } else {
                 screen.classList.remove('landscape');
             }
+
+            renderer3D.setSize(w, h);
+            camera3D.aspect = w / h;
+            camera3D.updateProjectionMatrix();
         }
 
         function startMovie() {
@@ -510,25 +579,17 @@
             }, sc.duration * 1000);
         }
 
-        let bgInterval = null;
         function renderFrame() {
             if (scenes.length === 0) return;
             const sc = scenes[currentIndex];
-            const screen = document.getElementById('main-screen');
 
             document.getElementById('scene-title-overlay').innerText = sc.desc;
             document.getElementById('play-sub').innerText = sc.subText;
 
-            // Dynamic Image Shifting matching the speech flow
-            const images = themeImages[sc.theme] || themeImages.space;
-            let imgIndex = 0;
-            screen.style.backgroundImage = `url('${images[imgIndex]}')`;
-
-            if (bgInterval) clearInterval(bgInterval);
-            bgInterval = setInterval(() => {
-                imgIndex = (imgIndex + 1) % images.length;
-                screen.style.backgroundImage = `url('${images[imgIndex]}')`;
-            }, 5000); // Shift background every 5 seconds dynamically
+            // Build and start Three.js 3D World for this scene
+            build3DWorld(sc.theme);
+            if (anim3DId) cancelAnimationFrame(anim3DId);
+            animate3D();
 
             // Handle Audio
             if (currentAudioPlayer) {
@@ -549,20 +610,20 @@
                 alert("Please add scenes before recording!");
                 return;
             }
-            alert("Starting playback for screen recording to export to TikTok/Reels!");
+            alert("Starting 3D playback for screen recording to export to TikTok/Reels!");
             startMovie();
         }
 
         function stopMovie() {
             isPlaying = false;
             clearTimeout(playTimer);
-            if (bgInterval) clearInterval(bgInterval);
+            if (anim3DId) cancelAnimationFrame(anim3DId);
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             if (currentAudioPlayer) {
                 currentAudioPlayer.pause();
                 currentAudioPlayer = null;
             }
-            document.getElementById('play-btn').innerText = "Play ▶️";
+            document.getElementById('play-btn').innerText = "Play 3D ▶️";
         }
 
         function nextScene() {
@@ -584,10 +645,9 @@
                 window.speechSynthesis.cancel();
                 const speech = new SpeechSynthesisUtterance(text);
                 speech.lang = 'en-US';
-                speech.rate = 0.9;
-                speech.pitch = 0.1; // Deep Low Pitch Male Voice
+                speech.rate = 0.85;
+                speech.pitch = 0.05; // Extremely Deep Low Pitch Male Voice
                 
-                // Select deep English male voice if available in device browser
                 const voices = window.speechSynthesis.getVoices();
                 const maleVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Mark') || v.name.includes('Google US English')));
                 if (maleVoice) speech.voice = maleVoice;
@@ -601,7 +661,6 @@
             const player = document.getElementById('tab-player');
 
             if (tab === 'editor') {
-                editor.classList.add('active');
                 editor.classList.remove('hidden');
                 player.classList.add('hidden');
                 stopMovie();
