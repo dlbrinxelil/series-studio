@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ستوديو المسلسلات التفاعلي</title>
+    <title>ستوديو المسلسلات والقصص البصرية</title>
     <style>
         * {
             box-sizing: border-box;
@@ -151,32 +151,24 @@
             width: 100%;
             max-width: 380px;
             aspect-ratio: 9/16;
-            background: linear-gradient(135deg, #1e1b4b, #311042);
+            background-color: #020617;
             border-radius: 16px;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             border: 2px solid #e11d48;
             box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3);
-            padding: 20px;
-            text-align: center;
         }
         .screen.landscape {
             max-width: 640px;
             aspect-ratio: 16/9;
         }
 
-        .screen-anim-icon {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            animation: floatAnim 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatAnim {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-10px) scale(1.05); }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
         }
 
         .screen-ratio-btn {
@@ -217,6 +209,7 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.8);
             z-index: 10;
             width: 90%;
+            text-align: center;
         }
 
         .controls {
@@ -241,12 +234,12 @@
 
     <header>
         <div class="logo-title">
-            <h1>🎬 ستوديو المسلسلات التفاعلي</h1>
-            <p>صانع ومشغل القصص المتحركة</p>
+            <h1>🎬 ستوديو المسلسلات والقصص البصرية</h1>
+            <p>رسوم متحركة حية ومؤثرات بصرية للعين</p>
         </div>
         <div class="nav-btns">
             <button class="btn btn-primary" onclick="showTab('editor')">📝 الكتابة والسيناريو</button>
-            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ عرض المسلسل</button>
+            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ عرض المشاهد</button>
         </div>
     </header>
 
@@ -256,13 +249,13 @@
             <div class="grid">
                 <div>
                     <div class="card">
-                        <h2>إعدادات القصة</h2>
+                        <h2>إعدادات المسلسل</h2>
                         <div class="form-group">
                             <label>عنوان الحلقة أو المسلسل</label>
-                            <input type="text" id="series-title" value="أسرار الكون المجهول">
+                            <input type="text" id="series-title" value="قصص مغامرات ركض الهروب">
                         </div>
                         <div class="form-group">
-                            <label>طريقة الترجمة والعرض</label>
+                            <label>طريقة الترجمة والعرض الصوتي والمرئي</label>
                             <select id="display-mode">
                                 <option value="both">🔊💬 صوت + كتابة ترجمة (الكل)</option>
                                 <option value="text-only">💬 كتابة ترجمة فقط (بدون صوت)</option>
@@ -272,36 +265,35 @@
                     </div>
 
                     <div class="card">
-                        <h2>إضافة مشهد جديد (طويل 30+ ثانية)</h2>
+                        <h2>إضافة مشهد بصري متحرك (30+ ثانية)</h2>
                         <div class="form-group">
-                            <label>نوع المشهد والأيقونة المتحركة</label>
-                            <select id="scene-icon">
-                                <option value="🚀">🚀 سفينة وفضاء</option>
-                                <option value="🏰">🏰 قلعة وفنتازيا وسحر</option>
-                                <option value="🌆">🌆 مدينة نيون ومستقبل</option>
-                                <option value="🌲">🌲 طبيعة ومغامرة</option>
-                                <option value="⚔️">⚔️ قتال وأكشن</option>
+                            <label>نوع الرسم والحركة المرئية للعين</label>
+                            <select id="scene-type">
+                                <option value="running">🏃 رجل يركض ويهرب بمغامرة حية</option>
+                                <option value="space">🚀 سفينة فضائية تعبر الكواكب</option>
+                                <option value="fantasy">🏰 قلعة سحرية ومجسمات طافية</option>
+                                <option value="cyber">🌆 مدينة نيون ومستقبل</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>وصف المشهد البصري (عنوان المشهد)</label>
-                            <textarea id="scene-desc" rows="2" placeholder="وصف تفصيلي لما يحدث في المشهد..."></textarea>
+                            <label>عنوان ووصف المشهد البصري</label>
+                            <textarea id="scene-desc" rows="2" placeholder="صف ما يراه المشاهد..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>مدة المشهد (بالثواني - لقصص طويلة 30 ثانية فما فوق)</label>
                             <input type="number" id="scene-duration" value="15" min="5" max="60">
                         </div>
                         <div class="form-group">
-                            <label>🔊 النص المنطوق بالصوت (عدة أسطر مريحة للدبلجة)</label>
-                            <textarea id="scene-spoken-text" rows="3" placeholder="اكتب الحوار أو القصة المطولة هنا ليتم نطقها بالكامل..."></textarea>
+                            <label>🔊 النص المنطوق بالصوت (دبلجة عربية أو إنجليزية)</label>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="النص الذي سينطقه الصوت..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>💬 نص الترجمة السفلي المكتوب</label>
-                            <textarea id="scene-sub-text" rows="3" placeholder="النص الذي يظهر أسفل الشاشة بالأسطر التي تريدها..."></textarea>
+                            <textarea id="scene-sub-text" rows="3" placeholder="النص الذي يظهر أسفل الشاشة..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد للقائمة</button>
-                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 فكرة تريند جاهزة</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 قصة جاهزة طويلة</button>
                         </div>
                     </div>
                 </div>
@@ -313,7 +305,7 @@
                             <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeAllScenes()">مسح الكل</button>
                         </div>
                         <div id="scenes-list">
-                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>
+                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اضغط قصة جاهزة أو أضف مشهدك!</p>
                         </div>
                     </div>
                 </div>
@@ -328,7 +320,7 @@
                     <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 يوتيوب عريض (16:9)</button>
                 </div>
                 <div class="screen" id="main-screen">
-                    <div id="play-icon" class="screen-anim-icon">🚀</div>
+                    <canvas id="anim-canvas"></canvas>
                     <div id="scene-title-overlay" class="scene-overlay-title"></div>
                     <div id="play-sub" class="subtitles">...</div>
                 </div>
@@ -357,41 +349,48 @@
         let isPlaying = false;
         let playTimer = null;
         let currentLang = 'ar-SA';
-        let isRecording = false;
+        let canvas, ctx, animFrameId;
+        let runnerX = 50;
 
         const trendingIdeas = [
             {
-                icon: "🚀",
-                desc: "رحلة عبور الثقب الأسود والوصول لمجرة موازية",
+                type: "running",
+                desc: "هروب مثير عبر الغابة المظلمة وملاحقة المخلوقات",
                 duration: 20,
-                spokenText: "في عام 3050، اكتشف البشر بوابة غريبة في عمق الفضاء السحيق. عندما دخلت السفينة، تغير كل ما نؤمن به عن الزمن والفيزياء وأصبحنا في عالم مختلف تماماً.",
-                subText: "البوابة فتحت.. هل نحن وحدنا في هذا الكون الواسع؟"
+                spokenText: "كان يركض بكل ما أوتي من قوة والظل يلاحقه في كل مكان. لم يكن هناك وقت للتوقف، فالنجاة هي الخيار الوحيد.",
+                subText: "Run faster! The danger is right behind you."
             },
             {
-                icon: "🏰",
-                desc: "سر القلعة المفقودة والكنز الملكي السحري",
+                type: "space",
+                desc: "اكتشاف المجرة الضائعة وسفر عبر الثقوب الدودية",
                 duration: 20,
-                spokenText: "على قمة جبل الضباب، تقف قلعة أثرية لم يزلورها بشر منذ آلاف السنين. يقال إن من يجد المفتاح الذهبي داخلها سيحصل على قوة تحكم الكواكب.",
-                subText: "الوصول إلى القاعة الكبرى يتطلب شجاعة لا تملكها سوى الأساطير."
+                spokenText: "في عمق الفضاء السحيق، تتطاير النجوم بسرعة خيالية نحو المجهول. مرحباً بكم في العالم الجديد.",
+                subText: "Exploring deep space anomalies and unknown galaxies."
             },
             {
-                icon: "🌆",
-                desc: "مدينة المستقبل المضاءة بأضواء النيون الذكية",
+                type: "fantasy",
+                desc: "الوصول إلى بوابة القلعة السحرية المفقودة",
                 duration: 20,
-                spokenText: "في مدينة لا تنام، حيث تتطاير السيارات بين ناطحات السحاب المضيئة، يراقب النظام كل حركة. لكن هناك مجموعة سرية تخطط لتغيير مصير المدينة للأبد.",
-                subText: "عندما يختفي النيون، تبدأ الحكاية الحقيقية."
+                spokenText: "أبواب القلعة تفتح أسرارها لمن يملك الشجاعة وحدها. الأساطير تصبح حقيقة أمام أعيننا الآن.",
+                subText: "The magical castle gates reveal ancient secrets."
             }
         ];
 
         window.onload = function() {
-            document.getElementById('scene-desc').value = trendingIdeas[0].desc;
-            document.getElementById('scene-spoken-text').value = trendingIdeas[0].spokenText;
-            document.getElementById('scene-sub-text').value = trendingIdeas[0].subText;
+            canvas = document.getElementById('anim-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            loadTrendingIdea();
         };
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
 
         function loadTrendingIdea() {
             const random = trendingIdeas[Math.floor(Math.random() * trendingIdeas.length)];
-            document.getElementById('scene-icon').value = random.icon;
+            document.getElementById('scene-type').value = random.type;
             document.getElementById('scene-desc').value = random.desc;
             document.getElementById('scene-duration').value = random.duration;
             document.getElementById('scene-spoken-text').value = random.spokenText;
@@ -402,7 +401,7 @@
             const desc = document.getElementById('scene-desc').value.trim();
             const spokenText = document.getElementById('scene-spoken-text').value.trim();
             const subText = document.getElementById('scene-sub-text').value.trim();
-            const icon = document.getElementById('scene-icon').value;
+            const type = document.getElementById('scene-type').value;
             const duration = parseInt(document.getElementById('scene-duration').value) || 15;
 
             if (!desc) {
@@ -414,7 +413,7 @@
                 desc: desc,
                 spokenText: spokenText || desc,
                 subText: subText || spokenText || desc,
-                icon: icon,
+                type: type,
                 duration: duration
             });
 
@@ -429,15 +428,14 @@
             document.getElementById('scenes-count').innerText = scenes.length;
 
             if (scenes.length === 0) {
-                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>';
+                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد!</p>';
                 return;
             }
 
             list.innerHTML = scenes.map((sc, i) => `
                 <div class="scene-item">
-                    <span style="font-size: 1.5rem;">${sc.icon}</span>
                     <div class="scene-info">
-                        <strong>مشهد #${i + 1} (${sc.duration}ث)</strong>
+                        <strong>مشهد #${i + 1} (${sc.duration}ث - ${sc.type})</strong>
                         <p>${sc.desc}</p>
                     </div>
                     <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
@@ -462,6 +460,7 @@
             } else {
                 screen.classList.remove('landscape');
             }
+            setTimeout(resizeCanvas, 100);
         }
 
         function startMovie() {
@@ -505,7 +504,6 @@
             const sc = scenes[currentIndex];
             const mode = document.getElementById('display-mode').value;
 
-            document.getElementById('play-icon').innerText = sc.icon;
             document.getElementById('scene-title-overlay').innerText = sc.desc;
             const subElem = document.getElementById('play-sub');
 
@@ -521,6 +519,69 @@
                 subElem.innerText = sc.subText;
                 speak(sc.spokenText);
             }
+
+            startVisualLoop(sc.type);
+        }
+
+        function startVisualLoop(type) {
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            
+            function draw() {
+                if (!isPlaying) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (type === 'running') {
+                    // Background moving grid/forest
+                    ctx.fillStyle = '#0f172a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // Ground
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+
+                    // Running Character Animation
+                    runnerX = (runnerX + 4) % canvas.width;
+                    const rx = canvas.width / 2 + Math.sin(Date.now() * 0.01) * 20;
+                    const ry = canvas.height - 130;
+
+                    // Head
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.beginPath(); ctx.arc(rx, ry - 25, 12, 0, Math.PI * 2); ctx.fill();
+                    // Body
+                    ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 4;
+                    ctx.beginPath(); ctx.moveTo(rx, ry - 13); ctx.lineTo(rx, ry + 20); ctx.stroke();
+                    // Legs (running motion)
+                    const legAngle = Math.sin(Date.now() * 0.02) * 15;
+                    ctx.beginPath();
+                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx - 15 + legAngle, ry + 50);
+                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx + 15 - legAngle, ry + 50);
+                    ctx.stroke();
+
+                } else if (type === 'space') {
+                    ctx.fillStyle = '#020617';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    // Moving stars
+                    ctx.fillStyle = '#ffffff';
+                    for(let i=0; i<50; i++) {
+                        let sx = (i * 37 + Date.now() * 0.05) % canvas.width;
+                        let sy = (i * 53) % canvas.height;
+                        ctx.fillRect(sx, sy, 3, 3);
+                    }
+                    // Planet
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.beginPath(); ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2); ctx.fill();
+
+                } else {
+                    ctx.fillStyle = '#311042';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.font = "40px sans-serif";
+                    ctx.fillText("🏰 ✨", canvas.width / 2 - 35, canvas.height / 2);
+                }
+
+                animFrameId = requestAnimationFrame(draw);
+            }
+            draw();
         }
 
         function toggleRecord() {
@@ -528,13 +589,14 @@
                 alert("أضف مشاهد أولاً لتسجيل الفيديو!");
                 return;
             }
-            alert("ميزة تسجيل الشاشة لتصدير الفيديو لتيك توك وإنستا جاهزة! سيتم تشغيل العرض الآن.");
+            alert("بدء تشغيل العرض لتسجيل شاشة الهاتف وتحميل الفيديو لتيك توك وإنستا!");
             startMovie();
         }
 
         function stopMovie() {
             isPlaying = false;
             clearTimeout(playTimer);
+            if (animFrameId) cancelAnimationFrame(animFrameId);
             document.getElementById('play-btn').innerText = "تشغيل ▶️";
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
