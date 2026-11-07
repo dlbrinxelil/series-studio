@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ستوديو المسلسلات والقصص البصرية</title>
+    <title>Short Series & Stories 3D Studio</title>
     <style>
         * {
             box-sizing: border-box;
@@ -234,12 +234,12 @@
 
     <header>
         <div class="logo-title">
-            <h1>🎬 ستوديو المسلسلات والقصص البصرية</h1>
-            <p>رسوم متحركة حية ومؤثرات بصرية للعين</p>
+            <h1>🎬 Series & Story 3D Studio</h1>
+            <p>Live Visual Animation & Voiceover for TikTok/Reels</p>
         </div>
         <div class="nav-btns">
-            <button class="btn btn-primary" onclick="showTab('editor')">📝 الكتابة والسيناريو</button>
-            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ عرض المشاهد</button>
+            <button class="btn btn-primary" onclick="showTab('editor')">📝 Script Editor</button>
+            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ Play Series</button>
         </div>
     </header>
 
@@ -249,51 +249,51 @@
             <div class="grid">
                 <div>
                     <div class="card">
-                        <h2>إعدادات المسلسل</h2>
+                        <h2>Series Settings</h2>
                         <div class="form-group">
-                            <label>عنوان الحلقة أو المسلسل</label>
-                            <input type="text" id="series-title" value="قصص مغامرات ركض الهروب">
+                            <label>Series or Episode Title</label>
+                            <input type="text" id="series-title" value="The Great Escape Adventure">
                         </div>
                         <div class="form-group">
-                            <label>طريقة الترجمة والعرض الصوتي والمرئي</label>
+                            <label>Display & Audio Mode</label>
                             <select id="display-mode">
-                                <option value="both">🔊💬 صوت + كتابة ترجمة (الكل)</option>
-                                <option value="text-only">💬 كتابة ترجمة فقط (بدون صوت)</option>
-                                <option value="voice-only">🔊 صوت فقط (بدون كتابة أسفل الشاشة)</option>
+                                <option value="both">🔊💬 Voiceover + Subtitles (Both)</option>
+                                <option value="text-only">💬 Subtitles Only (No Audio)</option>
+                                <option value="voice-only">🔊 Voiceover Only (No Subtitles)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="card">
-                        <h2>إضافة مشهد بصري متحرك (30+ ثانية)</h2>
+                        <h2>Add Live Visual Scene (30+ Secs)</h2>
                         <div class="form-group">
-                            <label>نوع الرسم والحركة المرئية للعين</label>
+                            <label>Visual Animation Type</label>
                             <select id="scene-type">
-                                <option value="running">🏃 رجل يركض ويهرب بمغامرة حية</option>
-                                <option value="space">🚀 سفينة فضائية تعبر الكواكب</option>
-                                <option value="fantasy">🏰 قلعة سحرية ومجسمات طافية</option>
-                                <option value="cyber">🌆 مدينة نيون ومستقبل</option>
+                                <option value="running">🏃 Running Character & Action Chase</option>
+                                <option value="space">🚀 Deep Space Galaxy & Flying Ships</option>
+                                <option value="fantasy">🏰 Magical Castle & Floating Orbs</option>
+                                <option value="cyber">🌆 Cyberpunk Neon City</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>عنوان ووصف المشهد البصري</label>
-                            <textarea id="scene-desc" rows="2" placeholder="صف ما يراه المشاهد..."></textarea>
+                            <label>Scene Visual Title</label>
+                            <textarea id="scene-desc" rows="2" placeholder="Describe what happens visually..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>مدة المشهد (بالثواني - لقصص طويلة 30 ثانية فما فوق)</label>
-                            <input type="number" id="scene-duration" value="15" min="5" max="60">
+                            <label>Duration in Seconds (Make it 20-30s for long shorts)</label>
+                            <input type="number" id="scene-duration" value="20" min="5" max="60">
                         </div>
                         <div class="form-group">
-                            <label>🔊 النص المنطوق بالصوت (دبلجة عربية أو إنجليزية)</label>
-                            <textarea id="scene-spoken-text" rows="3" placeholder="النص الذي سينطقه الصوت..."></textarea>
+                            <label>🔊 Spoken Voiceover Text (English Speech)</label>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="Text to be spoken by AI voice..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>💬 نص الترجمة السفلي المكتوب</label>
-                            <textarea id="scene-sub-text" rows="3" placeholder="النص الذي يظهر أسفل الشاشة..."></textarea>
+                            <label>💬 Subtitle Text (Bottom screen text)</label>
+                            <textarea id="scene-sub-text" rows="3" placeholder="Text to show at the bottom..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد للقائمة</button>
-                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 قصة جاهزة طويلة</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Scene to List</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 Ready Story Idea</button>
                         </div>
                     </div>
                 </div>
@@ -301,11 +301,11 @@
                 <div>
                     <div class="card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <h2 style="margin: 0;">قائمة المشاهد (<span id="scenes-count">0</span>)</h2>
-                            <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeAllScenes()">مسح الكل</button>
+                            <h2 style="margin: 0;">Scenes List (<span id="scenes-count">0</span>)</h2>
+                            <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeAllScenes()">Clear All</button>
                         </div>
                         <div id="scenes-list">
-                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اضغط قصة جاهزة أو أضف مشهدك!</p>
+                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">No scenes added yet! Click Ready Story Idea or add your own.</p>
                         </div>
                     </div>
                 </div>
@@ -316,8 +316,8 @@
         <div id="tab-player" class="hidden">
             <div class="player-container">
                 <div style="margin-bottom: 10px; display: flex; gap: 8px;">
-                    <button class="screen-ratio-btn" onclick="setAspectRatio('9/16')">📱 تيك توك وريلز (9:16)</button>
-                    <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 يوتيوب عريض (16:9)</button>
+                    <button class="screen-ratio-btn" onclick="setAspectRatio('9/16')">📱 TikTok & Reels (9:16)</button>
+                    <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 YouTube Landscape (16:9)</button>
                 </div>
                 <div class="screen" id="main-screen">
                     <canvas id="anim-canvas"></canvas>
@@ -327,15 +327,15 @@
 
                 <div class="controls">
                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">تشغيل ▶️</button>
-                        <button class="btn" style="background:#16a34a;" id="record-btn" onclick="toggleRecord()">🔴 تسجيل وتنزيل فيديو</button>
-                        <button class="btn" onclick="prevScene()">السابق</button>
-                        <button class="btn" onclick="nextScene()">التالي</button>
+                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">Play ▶️</button>
+                        <button class="btn" style="background:#16a34a;" id="record-btn" onclick="toggleRecord()">🔴 Record & Download</button>
+                        <button class="btn" onclick="prevScene()">Prev</button>
+                        <button class="btn" onclick="nextScene()">Next</button>
                     </div>
                     <div>
                         <select id="voice-lang" onchange="changeLang()" style="background:#0b0f19; color:#fff; border:1px solid #1e2d4a; padding:6px; border-radius:6px; font-size:0.8rem;">
-                            <option value="ar-SA">الصوت: عربي 🇸🇦</option>
                             <option value="en-US">Voice: English 🇺🇸</option>
+                            <option value="ar-SA">الصوت: عربي 🇸🇦</option>
                         </select>
                     </div>
                 </div>
@@ -348,31 +348,31 @@
         let currentIndex = 0;
         let isPlaying = false;
         let playTimer = null;
-        let currentLang = 'ar-SA';
+        let currentLang = 'en-US';
         let canvas, ctx, animFrameId;
         let runnerX = 50;
 
         const trendingIdeas = [
             {
                 type: "running",
-                desc: "هروب مثير عبر الغابة المظلمة وملاحقة المخلوقات",
-                duration: 20,
-                spokenText: "كان يركض بكل ما أوتي من قوة والظل يلاحقه في كل مكان. لم يكن هناك وقت للتوقف، فالنجاة هي الخيار الوحيد.",
-                subText: "Run faster! The danger is right behind you."
+                desc: "An intense escape run through the dark cyber forest",
+                duration: 25,
+                spokenText: "He ran with all his might as shadows chased him through the dark forest. There was no time to look back; survival was the only option left.",
+                subText: "Run faster! The dark shadows are closing in..."
             },
             {
                 type: "space",
-                desc: "اكتشاف المجرة الضائعة وسفر عبر الثقوب الدودية",
-                duration: 20,
-                spokenText: "في عمق الفضاء السحيق، تتطاير النجوم بسرعة خيالية نحو المجهول. مرحباً بكم في العالم الجديد.",
-                subText: "Exploring deep space anomalies and unknown galaxies."
+                desc: "Deep space warp jump into an alternate dimension",
+                duration: 25,
+                spokenText: "Traveling at warp speed through deep space anomalies. Welcome to the parallel universe where time stands completely still.",
+                subText: "Wormhole stabilized. Entering galaxy X..."
             },
             {
                 type: "fantasy",
-                desc: "الوصول إلى بوابة القلعة السحرية المفقودة",
-                duration: 20,
-                spokenText: "أبواب القلعة تفتح أسرارها لمن يملك الشجاعة وحدها. الأساطير تصبح حقيقة أمام أعيننا الآن.",
-                subText: "The magical castle gates reveal ancient secrets."
+                desc: "Unlocking the gates of the ancient floating castle",
+                duration: 25,
+                spokenText: "High above the clouds, the legendary castle awaits those brave enough to turn the golden key of destiny.",
+                subText: "The ancient secrets of magic are finally revealed."
             }
         ];
 
@@ -402,10 +402,10 @@
             const spokenText = document.getElementById('scene-spoken-text').value.trim();
             const subText = document.getElementById('scene-sub-text').value.trim();
             const type = document.getElementById('scene-type').value;
-            const duration = parseInt(document.getElementById('scene-duration').value) || 15;
+            const duration = parseInt(document.getElementById('scene-duration').value) || 20;
 
             if (!desc) {
-                alert("يرجى إدخال وصف المشهد!");
+                alert("Please enter a scene description!");
                 return;
             }
 
@@ -428,14 +428,14 @@
             document.getElementById('scenes-count').innerText = scenes.length;
 
             if (scenes.length === 0) {
-                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد!</p>';
+                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">No scenes added yet!</p>';
                 return;
             }
 
             list.innerHTML = scenes.map((sc, i) => `
                 <div class="scene-item">
                     <div class="scene-info">
-                        <strong>مشهد #${i + 1} (${sc.duration}ث - ${sc.type})</strong>
+                        <strong>Scene #${i + 1} (${sc.duration}s - ${sc.type})</strong>
                         <p>${sc.desc}</p>
                     </div>
                     <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
@@ -466,7 +466,7 @@
         function startMovie() {
             currentIndex = 0;
             isPlaying = true;
-            document.getElementById('play-btn').innerText = "إيقاف مؤقت ⏸️";
+            document.getElementById('play-btn').innerText = "Pause ⏸️";
             runScene();
         }
 
@@ -475,7 +475,7 @@
                 stopMovie();
             } else {
                 if (scenes.length === 0) {
-                    alert("أضف مشهداً واحداً على الأقل للعرض!");
+                    alert("Please add at least one scene to play!");
                     return;
                 }
                 startMovie();
@@ -531,7 +531,7 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 if (type === 'running') {
-                    // Background moving grid/forest
+                    // Background
                     ctx.fillStyle = '#0f172a';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -539,9 +539,8 @@
                     ctx.fillStyle = '#1e293b';
                     ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
 
-                    // Running Character Animation
-                    runnerX = (runnerX + 4) % canvas.width;
-                    const rx = canvas.width / 2 + Math.sin(Date.now() * 0.01) * 20;
+                    // Running Character Animation (Running Man)
+                    const rx = canvas.width / 2 + Math.sin(Date.now() * 0.01) * 25;
                     const ry = canvas.height - 130;
 
                     // Head
@@ -550,33 +549,31 @@
                     // Body
                     ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 4;
                     ctx.beginPath(); ctx.moveTo(rx, ry - 13); ctx.lineTo(rx, ry + 20); ctx.stroke();
-                    // Legs (running motion)
-                    const legAngle = Math.sin(Date.now() * 0.02) * 15;
+                    // Legs animation
+                    const legAngle = Math.sin(Date.now() * 0.02) * 18;
                     ctx.beginPath();
-                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx - 15 + legAngle, ry + 50);
-                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx + 15 - legAngle, ry + 50);
+                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx - 18 + legAngle, ry + 55);
+                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx + 18 - legAngle, ry + 55);
                     ctx.stroke();
 
                 } else if (type === 'space') {
                     ctx.fillStyle = '#020617';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    // Moving stars
                     ctx.fillStyle = '#ffffff';
-                    for(let i=0; i<50; i++) {
-                        let sx = (i * 37 + Date.now() * 0.05) % canvas.width;
+                    for(let i=0; i<60; i++) {
+                        let sx = (i * 37 + Date.now() * 0.08) % canvas.width;
                         let sy = (i * 53) % canvas.height;
                         ctx.fillRect(sx, sy, 3, 3);
                     }
-                    // Planet
                     ctx.fillStyle = '#3b82f6';
-                    ctx.beginPath(); ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(canvas.width / 2, canvas.height / 2, 70, 0, Math.PI * 2); ctx.fill();
 
                 } else {
                     ctx.fillStyle = '#311042';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = '#fbbf24';
-                    ctx.font = "40px sans-serif";
-                    ctx.fillText("🏰 ✨", canvas.width / 2 - 35, canvas.height / 2);
+                    ctx.font = "45px sans-serif";
+                    ctx.fillText("🏰 ✨", canvas.width / 2 - 40, canvas.height / 2);
                 }
 
                 animFrameId = requestAnimationFrame(draw);
@@ -586,10 +583,10 @@
 
         function toggleRecord() {
             if (scenes.length === 0) {
-                alert("أضف مشاهد أولاً لتسجيل الفيديو!");
+                alert("Please add scenes before recording!");
                 return;
             }
-            alert("بدء تشغيل العرض لتسجيل شاشة الهاتف وتحميل الفيديو لتيك توك وإنستا!");
+            alert("Starting movie playback for screen recording to export to TikTok/Reels!");
             startMovie();
         }
 
@@ -597,7 +594,7 @@
             isPlaying = false;
             clearTimeout(playTimer);
             if (animFrameId) cancelAnimationFrame(animFrameId);
-            document.getElementById('play-btn').innerText = "تشغيل ▶️";
+            document.getElementById('play-btn').innerText = "Play ▶️";
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
 
@@ -640,7 +637,7 @@
                 stopMovie();
             } else {
                 if (scenes.length === 0) {
-                    alert("يرجى إضافة مشهد واحد على الأقل قبل العرض!");
+                    alert("Please add at least one scene before playing!");
                     return;
                 }
                 editor.classList.add('hidden');
