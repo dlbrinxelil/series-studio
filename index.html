@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -114,6 +115,9 @@
             font-size: 0.85rem;
             outline: none;
         }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #e11d48;
+        }
 
         /* Scenes List */
         .scene-item {
@@ -126,7 +130,7 @@
             gap: 12px;
             align-items: center;
         }
-        .scene-img {
+        .scene-img-canvas {
             width: 90px;
             height: 55px;
             background-color: #151d2a;
@@ -142,8 +146,15 @@
             color: #f43f5e;
             display: block;
         }
+        .scene-info p {
+            color: #cbd5e1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
 
-        /* Player Screen */
+        /* Player Cinema Screen */
         .player-container {
             display: flex;
             flex-direction: column;
@@ -161,26 +172,27 @@
             align-items: center;
             border: 1px solid #1e2d4a;
         }
-        .screen img {
+        .screen canvas {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* Subtitle Banner */
+        /* Small Subtitle Banner */
         .subtitles {
             position: absolute;
-            bottom: 8px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.85);
             color: #fef08a;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
             text-align: center;
-            max-width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 85%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
         .controls {
@@ -216,6 +228,7 @@
         <!-- EDITOR SECTION -->
         <div id="tab-editor">
             <div class="grid">
+                <!-- Inputs -->
                 <div>
                     <div class="card">
                         <h2>إعدادات القصة</h2>
@@ -232,8 +245,12 @@
                             <textarea id="scene-desc" rows="3" placeholder="مثال: رائد فضاء يقف على كوكب غريب ملون..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>النص أو الحوار (يترجم أسفل الشاشة)</label>
+                            <label>النص أو الحوار بالعربي</label>
                             <textarea id="scene-text" rows="2" placeholder="مثال: مرحباً بكم في العالم الجديد..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>ترجمة الحوار بالإنجليزي (English text for narration)</label>
+                            <textarea id="scene-text-en" rows="2" placeholder="Example: Welcome to the new world..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد</button>
@@ -242,6 +259,7 @@
                     </div>
                 </div>
 
+                <!-- Scenes List -->
                 <div>
                     <div class="card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -260,7 +278,7 @@
         <div id="tab-player" class="hidden">
             <div class="player-container">
                 <div class="screen">
-                    <img id="play-img" src="" alt="مشهد المسلسل">
+                    <canvas id="cinema-canvas" width="800" height="450"></canvas>
                     <div id="play-sub" class="subtitles">...</div>
                 </div>
 
@@ -288,10 +306,61 @@
         let playTimer = null;
         let currentLang = 'ar-SA';
 
+        const colorPalettes = [
+            ['#0f172a', '#1e1b4b', '#4338ca', '#38bdf8'],
+            ['#18181b', '#3f3f46', '#71717a', '#f43f5e'],
+            ['#064e3b', '#047857', '#10b981', '#a7f3d0'],
+            ['#4c1d95', '#6d28d9', '#8b5cf6', '#c084fc']
+        ];
+
         window.onload = function() {
             document.getElementById('scene-desc').value = "رائد فضاء ينظر إلى الأفق في غروب ثلاث شموس ملونة";
             document.getElementById('scene-text').value = "وصلنا إلى الكوكب، وتبدأ الرحلة الآن.";
+            document.getElementById('scene-text-en').value = "We have arrived at the planet, the journey begins now.";
         };
+
+        function drawSceneCanvas(desc, titleText, paletteIndex) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 450;
+            const ctx = canvas.getContext('2d');
+            const colors = colorPalettes[paletteIndex % colorPalettes.length];
+
+            // Gradient Background
+            const grad = ctx.createLinearGradient(0, 0, 800, 450);
+            grad.addColorStop(0, colors[0]);
+            grad.addColorStop(0.5, colors[1]);
+            grad.addColorStop(1, colors[2]);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 800, 450);
+
+            // Artistic circles
+            ctx.fillStyle = colors[3];
+            ctx.globalAlpha = 0.25;
+            ctx.beginPath();
+            ctx.arc(650, 120, 180, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(150, 350, 120, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+
+            // Text Banner Overlay
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(40, 40, 720, 370);
+
+            // Canvas Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(desc.substring(0, 35), 400, 220);
+
+            ctx.fillStyle = colors[3];
+            ctx.font = '20px sans-serif';
+            ctx.fillText("🎬 " + titleText, 400, 260);
+
+            return canvas.toDataURL();
+        }
 
         function showTab(tab) {
             const editor = document.getElementById('tab-editor');
@@ -315,23 +384,27 @@
         function addNewScene() {
             const desc = document.getElementById('scene-desc').value.trim();
             const text = document.getElementById('scene-text').value.trim();
+            const textEn = document.getElementById('scene-text-en').value.trim();
+            const seriesTitle = document.getElementById('series-title').value || "مسلسل قصير";
 
             if (!desc) {
                 alert("يرجى إدخال وصف المشهد!");
                 return;
             }
 
-            const textEncoded = encodeURIComponent(desc.substring(0, 25));
-            const imgUrl = `https://placehold.co/800x450/1e1b4b/e0e7ff?text=${textEncoded}`;
+            const imgUrl = drawSceneCanvas(desc, seriesTitle, scenes.length);
 
             scenes.push({
                 desc: desc,
                 text: text || desc,
+                textEn: textEn || text || desc,
                 img: imgUrl
             });
 
             document.getElementById('scene-desc').value = '';
             document.getElementById('scene-text').value = '';
+            document.getElementById('scene-text-en').value = '';
+
             renderScenes();
         }
 
@@ -346,7 +419,7 @@
 
             list.innerHTML = scenes.map((sc, i) => `
                 <div class="scene-item">
-                    <img src="${sc.img}" class="scene-img">
+                    <img src="${sc.img}" class="scene-img-canvas">
                     <div class="scene-info">
                         <strong>مشهد #${i + 1}</strong>
                         <p>${sc.desc}</p>
@@ -368,13 +441,14 @@
 
         function suggestIdea() {
             const ideas = [
-                { desc: "سفينة فضائية تعبر سحابة من النجوم والمتألقات الزرقاء", text: "تم تفعيل القفزة الضوئية باتجاه المجرة المجهولة." },
-                { desc: "قلعة قديمة فوق قمة جبل تحيط بها الغيوم والمطر", text: "أخيراً وصل الملك إلى القلعة المفقودة." },
-                { desc: "مدينة مستقبلية مليئة بالإضاءات النيونية في منتصف الليل", text: "في هذه المدينة، كل شيء ممكن إذا كنت تملك المفتاح." }
+                { desc: "سفينة فضائية تعبر سحابة من النجوم الملونة", text: "تم تفعيل القفزة الضوئية باتجاه المجرة المجهولة.", textEn: "Warp drive engaged towards the unknown galaxy." },
+                { desc: "قلعة قديمة فوق قمة جبل تحيط بها الغيوم والمطر", text: "أخيراً وصل الملك إلى القلعة المفقودة.", textEn: "Finally, the King arrived at the lost castle." },
+                { desc: "مدينة مستقبلية مليئة بالإضاءات النيونية في منتصف الليل", text: "في هذه المدينة، كل شيء ممكن إذا كنت تملك المفتاح.", textEn: "In this city, everything is possible if you hold the key." }
             ];
             const random = ideas[Math.floor(Math.random() * ideas.length)];
             document.getElementById('scene-desc').value = random.desc;
             document.getElementById('scene-text').value = random.text;
+            document.getElementById('scene-text-en').value = random.textEn;
         }
 
         function startMovie() {
@@ -386,9 +460,17 @@
             if (scenes.length === 0) return;
             const sc = scenes[currentIndex];
 
-            document.getElementById('play-img').src = sc.img;
-            document.getElementById('play-sub').innerText = sc.text;
-            speak(sc.text);
+            const canvas = document.getElementById('cinema-canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, 800, 450);
+            };
+            img.src = sc.img;
+
+            const activeText = currentLang === 'en-US' ? sc.textEn : sc.text;
+            document.getElementById('play-sub').innerText = activeText;
+            speak(activeText);
         }
 
         function togglePlay() {
@@ -405,7 +487,7 @@
                         currentIndex = 0;
                         renderPlayerFrame();
                     }
-                }, 4000);
+                }, 4500);
             }
         }
 
@@ -447,3 +529,4 @@
     </script>
 </body>
 </html>
+```
