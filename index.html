@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Short Series Studio</title>
+    <title>Cinematic Short Series Studio Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -159,12 +159,27 @@
             align-items: center;
             border: 2px solid #e11d48;
             box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3);
-            background-size: cover;
-            background-position: center;
         }
         .screen.landscape {
             max-width: 640px;
             aspect-ratio: 16/9;
+        }
+
+        .cinematic-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            animation: zoomEffect 20s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+
+        @keyframes zoomEffect {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
         }
 
         .screen-ratio-btn {
@@ -234,8 +249,8 @@
 
     <header>
         <div class="logo-title">
-            <h1>🎬 Cinematic Short Series Studio</h1>
-            <p>Real Cinematic Backgrounds & Subtitles</p>
+            <h1>🎬 Cinematic Short Series Studio Pro</h1>
+            <p>Moving Cinematic Backgrounds & Male Voiceover</p>
         </div>
         <div class="nav-btns">
             <button class="btn btn-primary" onclick="showTab('editor')">📝 Script Editor</button>
@@ -255,23 +270,22 @@
                             <input type="text" id="series-title" value="Epic Cinematic Shorts">
                         </div>
                         <div class="form-group">
-                            <label>Display Mode</label>
-                            <select id="display-mode">
-                                <option value="both">💬 Subtitles + 🔊 Voiceover</option>
-                                <option value="text-only">💬 Subtitles Only (Recommended for clean look)</option>
-                                <option value="voice-only">🔊 Voiceover Only</option>
+                            <label>Voice Voiceover Tone</label>
+                            <select id="voice-tone">
+                                <option value="male">🎙️ Deep Male Voice (صوت ذكري عميق)</option>
+                                <option value="female">🎙️ Female Voice (صوت أنثوي)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="card">
-                        <h2>Add Cinematic Scene (30+ Secs)</h2>
+                        <h2>Add Moving Cinematic Scene (30+ Secs)</h2>
                         <div class="form-group">
-                            <label>Cinematic Background Theme</label>
+                            <label>Cinematic Moving Theme</label>
                             <select id="scene-theme">
-                                <option value="space">🚀 Deep Space & Glowing Galaxies</option>
-                                <option value="cyber">🌆 Cyberpunk Neon City at Night</option>
-                                <option value="fantasy">🏰 Ancient Magical Fantasy Castle</option>
+                                <option value="space">🚀 Deep Space Warp & Moving Galaxies</option>
+                                <option value="cyber">🌆 Cyberpunk City Chase & Neon Lights</option>
+                                <option value="fantasy">🏰 Ancient Magical Floating Citadel</option>
                                 <option value="nature">🌲 Mysterious Dark Forest & Mist</option>
                             </select>
                         </div>
@@ -290,6 +304,10 @@
                         <div class="form-group">
                             <label>💬 Subtitle Text (Shown on Screen)</label>
                             <textarea id="scene-sub-text" rows="3" placeholder="Subtitles..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>🎵 Upload Custom Audio (Optional: MP3/WAV from your phone)</label>
+                            <input type="file" id="custom-audio-file" accept="audio/*">
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Scene</button>
@@ -320,6 +338,7 @@
                     <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 YouTube Landscape (16:9)</button>
                 </div>
                 <div class="screen" id="main-screen">
+                    <div id="cinematic-bg-layer" class="cinematic-bg"></div>
                     <div id="scene-title-overlay" class="scene-overlay-title"></div>
                     <div id="play-sub" class="subtitles">...</div>
                 </div>
@@ -331,12 +350,6 @@
                         <button class="btn" onclick="prevScene()">Prev</button>
                         <button class="btn" onclick="nextScene()">Next</button>
                     </div>
-                    <div>
-                        <select id="voice-lang" style="background:#0b0f19; color:#fff; border:1px solid #1e2d4a; padding:6px; border-radius:6px; font-size:0.8rem;">
-                            <option value="en-US">English Voice 🇺🇸</option>
-                            <option value="ar-SA">Arabic Voice 🇸🇦</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
@@ -347,6 +360,7 @@
         let currentIndex = 0;
         let isPlaying = false;
         let playTimer = null;
+        let currentAudioPlayer = null;
 
         const backgroundImages = {
             space: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1000&auto=format&fit=crop",
@@ -360,7 +374,7 @@
                 theme: "cyber",
                 desc: "The Cyberpunk Runner's Escape",
                 duration: 25,
-                spokenText: "Running through the neon-lit alleys while the corporate drones track every single move. There's no turning back now.",
+                spokenText: "Running through the neon-lit alleys while corporate drones track every single move. There's no turning back now.",
                 subText: "🏃‍♂️ Running for survival through the neon grid..."
             },
             {
@@ -398,6 +412,12 @@
             const subText = document.getElementById('scene-sub-text').value.trim();
             const theme = document.getElementById('scene-theme').value;
             const duration = parseInt(document.getElementById('scene-duration').value) || 25;
+            const audioInput = document.getElementById('custom-audio-file');
+            
+            let audioUrl = null;
+            if (audioInput.files && audioInput.files[0]) {
+                audioUrl = URL.createObjectURL(audioInput.files[0]);
+            }
 
             if (!desc) {
                 alert("Please enter a scene description!");
@@ -409,12 +429,14 @@
                 spokenText: spokenText || desc,
                 subText: subText || spokenText || desc,
                 theme: theme,
-                duration: duration
+                duration: duration,
+                audioUrl: audioUrl
             });
 
             document.getElementById('scene-desc').value = '';
             document.getElementById('scene-spoken-text').value = '';
             document.getElementById('scene-sub-text').value = '';
+            audioInput.value = '';
             renderScenes();
         }
 
@@ -431,7 +453,7 @@
                 <div class="scene-item">
                     <div class="scene-info">
                         <strong>Scene #${i + 1} (${sc.duration}s - ${sc.theme})</strong>
-                        <p>${sc.desc}</p>
+                        <p>${sc.desc} ${sc.audioUrl ? '🎵 (Custom Audio)' : ''}</p>
                     </div>
                     <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
                 </div>
@@ -496,25 +518,23 @@
         function renderFrame() {
             if (scenes.length === 0) return;
             const sc = scenes[currentIndex];
-            const mode = document.getElementById('display-mode').value;
-            const screen = document.getElementById('main-screen');
+            const bgLayer = document.getElementById('cinematic-bg-layer');
 
-            // Set Real Cinematic Background Image
-            screen.style.backgroundImage = `url('${backgroundImages[sc.theme] || backgroundImages.space}')`;
+            // Set Moving Cinematic Background Image
+            bgLayer.style.backgroundImage = `url('${backgroundImages[sc.theme] || backgroundImages.space}')`;
             document.getElementById('scene-title-overlay').innerText = sc.desc;
-            
-            const subElem = document.getElementById('play-sub');
+            document.getElementById('play-sub').innerText = sc.subText;
 
-            if (mode === 'voice-only') {
-                subElem.style.display = 'none';
-                speak(sc.spokenText);
-            } else if (mode === 'text-only') {
-                subElem.style.display = 'block';
-                subElem.innerText = sc.subText;
-                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            // Handle Audio (Custom file or speech synthesis with Male/Female tone)
+            if (currentAudioPlayer) {
+                currentAudioPlayer.pause();
+                currentAudioPlayer = null;
+            }
+
+            if (sc.audioUrl) {
+                currentAudioPlayer = new Audio(sc.audioUrl);
+                currentAudioPlayer.play();
             } else {
-                subElem.style.display = 'block';
-                subElem.innerText = sc.subText;
                 speak(sc.spokenText);
             }
         }
@@ -531,8 +551,12 @@
         function stopMovie() {
             isPlaying = false;
             clearTimeout(playTimer);
-            document.getElementById('play-btn').innerText = "Play ▶️";
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (currentAudioPlayer) {
+                currentAudioPlayer.pause();
+                currentAudioPlayer = null;
+            }
+            document.getElementById('play-btn').innerText = "Play ▶️";
         }
 
         function nextScene() {
@@ -553,9 +577,11 @@
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const speech = new SpeechSynthesisUtterance(text);
-                const langOpt = document.getElementById('voice-lang').value;
-                speech.lang = langOpt;
-                speech.rate = 0.95;
+                const tone = document.getElementById('voice-tone').value;
+                
+                speech.rate = 0.9;
+                speech.pitch = tone === 'male' ? 0.6 : 1.2; // Deep pitch for male voice
+                
                 window.speechSynthesis.speak(speech);
             }
         }
