@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ستوديو المسلسلات التفاعلي 3D</title>
+    <title>ستوديو المسلسلات التفاعلي</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
@@ -104,4 +104,263 @@
             color: #94a3b8;
             margin-bottom: 4px;
         }
-        .form-group input, .form-group textarea, .form-group select
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            background-color: #0b0f19;
+            border: 1px solid #1e2d4a;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .scene-item {
+            background-color: #0b0f19;
+            border: 1px solid #1e2d4a;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .scene-info {
+            flex: 1;
+            font-size: 0.8rem;
+        }
+        .scene-info strong {
+            color: #f43f5e;
+            display: block;
+        }
+        .scene-info p {
+            color: #cbd5e1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 220px;
+        }
+
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            aspect-ratio: 9/16;
+            background: linear-gradient(135deg, #1e1b4b, #311042);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #e11d48;
+            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3);
+            padding: 20px;
+            text-align: center;
+        }
+        .screen.landscape {
+            max-width: 640px;
+            aspect-ratio: 16/9;
+        }
+
+        .screen-anim-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            animation: floatAnim 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatAnim {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-10px) scale(1.05); }
+        }
+
+        .screen-ratio-btn {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .subtitles {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: #fef08a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-align: center;
+            max-width: 88%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+
+        .scene-overlay-title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: bold;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            z-index: 10;
+            width: 90%;
+        }
+
+        .controls {
+            width: 100%;
+            background-color: #131b2e;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-title">
+            <h1>🎬 ستوديو المسلسلات التفاعلي</h1>
+            <p>صانع ومشغل القصص المتحركة</p>
+        </div>
+        <div class="nav-btns">
+            <button class="btn btn-primary" onclick="showTab('editor')">📝 الكتابة والسيناريو</button>
+            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ عرض المسلسل</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- EDITOR SECTION -->
+        <div id="tab-editor">
+            <div class="grid">
+                <div>
+                    <div class="card">
+                        <h2>إعدادات القصة</h2>
+                        <div class="form-group">
+                            <label>عنوان الحلقة أو المسلسل</label>
+                            <input type="text" id="series-title" value="مغامرة الكوكب المجهول">
+                        </div>
+                        <div class="form-group">
+                            <label>طريقة الترجمة والعرض</label>
+                            <select id="display-mode">
+                                <option value="both">🔊💬 صوت + كتابة ترجمة (الكل)</option>
+                                <option value="text-only">💬 كتابة ترجمة فقط (بدون صوت)</option>
+                                <option value="voice-only">🔊 صوت فقط (بدون كتابة أسفل الشاشة)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>إضافة مشهد جديد</h2>
+                        <div class="form-group">
+                            <label>نوع المشهد والأيقونة المتحركة</label>
+                            <select id="scene-icon">
+                                <option value="🚀">🚀 سفينة وفضاء</option>
+                                <option value="🏰">🏰 قلعة وفنتازيا وسحر</option>
+                                <option value="🌆">🌆 مدينة نيون ومستقبل</option>
+                                <option value="🌲">🌲 طبيعة ومغامرة</option>
+                                <option value="⚔️">⚔️ قتال وأكشن</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>وصف المشهد البصري (عنوان المشهد)</label>
+                            <textarea id="scene-desc" rows="2" placeholder="مثال: رائد فضاء يعبر الكوكب..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>مدة المشهد (بالثواني - لقصص طويلة 30 ثانية فما فوق)</label>
+                            <input type="number" id="scene-duration" value="10" min="5" max="60">
+                        </div>
+                        <div class="form-group">
+                            <label>🔊 النص المنطوق بالصوت (دبلجة)</label>
+                            <textarea id="scene-spoken-text" rows="2" placeholder="النص الذي سينطقه الصوت..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>💬 نص الترجمة السفلي المكتوب</label>
+                            <textarea id="scene-sub-text" rows="2" placeholder="النص الذي يظهر أسفل الشاشة..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="suggestAIIDEAs()">🤖 💡 فكرة تريند من AI</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h2 style="margin: 0;">قائمة المشاهد (<span id="scenes-count">0</span>)</h2>
+                            <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeAllScenes()">مسح الكل</button>
+                        </div>
+                        <div id="scenes-list">
+                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAYER SECTION -->
+        <div id="tab-player" class="hidden">
+            <div class="player-container">
+                <div style="margin-bottom: 10px; display: flex; gap: 8px;">
+                    <button class="screen-ratio-btn" onclick="setAspectRatio('9/16')">📱 تيك توك وريلز (9:16)</button>
+                    <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 يوتيوب عريض (16:9)</button>
+                </div>
+                <div class="screen" id="main-screen">
+                    <div id="play-icon" class="screen-anim-icon">🚀</div>
+                    <div id="scene-title-overlay" class="scene-overlay-title"></div>
+                    <div id="play-sub" class="subtitles">...</div>
+                </div>
+
+                <div class="controls">
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">تشغيل ▶️</button>
+                        <button class="btn" style="background:#16a34a;" id="record-btn" onclick="toggleRecord()">🔴 تسجيل وتنزيل فيديو</button>
+                        <button class="btn" onclick="prevScene()">السابق</button>
+                        <button class="btn" onclick="nextScene()">التالي</button>
+                    </div>
+                    <div>
+                        <select id="voice-lang" onchange="changeLang()" style="background:#0b0f19; color:#fff; border:1px solid #1e2d4a; padding:6px; border-radius:6px; font-size:0.8rem;">
+                            <option value="ar-SA">الصوت: عربي 🇸🇦</option>
+                            <option value="en-US">Voice: English 🇺🇸</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let scenes = [];
+        let currentIndex = 0;
+        let isPlaying = false;
+        let playTimer = null;
+        let currentLang = 'ar-SA';
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+
+        window.onload = function() {
+            document.getElementById('scene-desc').value = "سفينة فضائية تعبر المجرة المجهولة";
+            document.getElementById('scene-spoken-text').value = "بد
