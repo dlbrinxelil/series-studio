@@ -130,14 +130,6 @@
             gap: 12px;
             align-items: center;
         }
-        .scene-img-canvas {
-            width: 90px;
-            height: 55px;
-            background-color: #151d2a;
-            border-radius: 6px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
         .scene-info {
             flex: 1;
             font-size: 0.8rem;
@@ -151,7 +143,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 200px;
+            max-width: 220px;
         }
 
         /* Player Cinema Screen */
@@ -163,7 +155,7 @@
         .screen {
             position: relative;
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
             aspect-ratio: 9/16;
             background-color: #000;
             border-radius: 16px;
@@ -172,7 +164,7 @@
             justify-content: center;
             align-items: center;
             border: 2px solid #e11d48;
-            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.2);
+            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.25);
         }
         .screen canvas {
             width: 100%;
@@ -184,43 +176,41 @@
             background: #1e293b;
             color: #fff;
             border: 1px solid #334155;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             cursor: pointer;
         }
-        .screen canvas {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
 
-        /* Small Subtitle Banner */
+        /* Subtitle Banner */
         .subtitles {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.85);
             color: #fef08a;
-            padding: 6px 16px;
+            padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.85rem;
             text-align: center;
-            max-width: 85%;
+            max-width: 88%;
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            line-height: 1.4;
         }
 
         .controls {
             width: 100%;
             background-color: #131b2e;
             padding: 12px;
-            border-radius: 0 0 12px 12px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .hidden {
@@ -251,40 +241,40 @@
                         <h2>إعدادات القصة</h2>
                         <div class="form-group">
                             <label>عنوان الحلقة أو المسلسل</label>
-                            <input type="text" id="series-title" value="مغامرة الفضاء المجهول">
+                            <input type="text" id="series-title" value="قلعة الأسرار السحرية">
                         </div>
                     </div>
 
                     <div class="card">
                         <h2>إضافة مشهد جديد</h2>
                         <div class="form-group">
-                            <label>نوع رسم المشهد البصري (SVG Illustration Style)</label>
+                            <label>نوع الطابع البصري للمشهد (Visual Theme)</label>
                             <select id="scene-style">
-                                <option value="space">🚀 فضاء ومجرات واستكشاف</option>
                                 <option value="fantasy">🏰 قلعة وفنتازيا وسحر</option>
+                                <option value="space">🚀 فضاء ومجرات واستكشاف</option>
                                 <option value="cyber">🌆 مدينة مستقبلية ونيون</option>
                                 <option value="nature">🌲 طبيعة وجبال وغروب</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>وصف المشهد البصري</label>
-                            <textarea id="scene-desc" rows="2" placeholder="مثال: رائد فضاء يقف على كوكب غريب ملون..."></textarea>
+                            <textarea id="scene-desc" rows="3" placeholder="مثال: قلعة بانورامية طافية في الهواء تحيط بها الشلالات..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>مدة المشهد (بالثواني)</label>
-                            <input type="number" id="scene-duration" value="6" min="2" max="30">
+                            <label>مدة المشهد (بالثواني - الحد الأدنى 30ث للفيديو الكامل)</label>
+                            <input type="number" id="scene-duration" value="10" min="5" max="60">
                         </div>
                         <div class="form-group">
                             <label>النص أو الحوار بالعربي</label>
-                            <textarea id="scene-text" rows="2" placeholder="مثال: مرحباً بكم في العالم الجديد..."></textarea>
+                            <textarea id="scene-text" rows="2" placeholder="مثال: أيها المسافرون، لقد وصلتم إلى عتبة قلعة الأسرار..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>ترجمة الحوار بالإنجليزي (English text for narration)</label>
-                            <textarea id="scene-text-en" rows="2" placeholder="Example: Welcome to the new world..."></textarea>
+                            <label>ترجمة الحوار بالإنجليزي (English narration)</label>
+                            <textarea id="scene-text-en" rows="2" placeholder="Example: Travelers, you have arrived at the Castle of Secrets..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد</button>
-                            <button class="btn" onclick="suggestIdea()">💡 فكرة تلقائية</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="suggestAITrendingIdea()">🤖 💡 فكرة تريند من AI</button>
                         </div>
                     </div>
                 </div>
@@ -346,115 +336,18 @@
         let animFrameId = null;
         let animProgress = 0;
 
-        const styleIcons = {
-            space: `<path fill="#38bdf8" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>`,
-            fantasy: `<path fill="#c084fc" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>`,
-            cyber: `<path fill="#f43f5e" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>`,
-            nature: `<path fill="#4ade80" d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.8 13.7 7 10 7 10l-6 8h22L14 6z"/>`
-        };
-
         window.onload = function() {
-            document.getElementById('scene-desc').value = "رحلة إلى كوكب مجهول في أعماق الفضاء";
-            document.getElementById('scene-text').value = "وصلنا إلى الكوكب، وتبدأ المغامرة الآن لتكشف لنا أسرار الكون.";
-            document.getElementById('scene-text-en').value = "We arrived at the planet, and the adventure begins now.";
+            document.getElementById('scene-desc').value = "مشهد بانورامي لقلعة قديمة تطفو على جزيرة صخرية معلقة في الهواء...";
+            document.getElementById('scene-text').value = "أيها المسافرون، لقد وصلتم إلى عتبة قلعة الأسرار. هنا، السحر ليس مجرد خرافة.";
+            document.getElementById('scene-text-en').value = "Travelers, you have arrived at the threshold of the Castle of Secrets. Here, magic is real.";
         };
-
-        function setAspectRatio(ratio) {
-            const screen = document.getElementById('main-screen');
-            const canvas = document.getElementById('cinema-canvas');
-            screen.style.aspectRatio = ratio;
-            if (ratio === '9/16') {
-                canvas.width = 720;
-                canvas.height = 1280;
-            } else {
-                canvas.width = 1280;
-                canvas.height = 720;
-            }
-            renderPlayerFrame();
-        }
-
-        function drawAnimatedCanvas(sc, progress) {
-            const canvas = document.getElementById('cinema-canvas');
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width;
-            const h = canvas.height;
-
-            // Animated Zoom Effect
-            const scale = 1 + progress * 0.08;
-            ctx.save();
-            ctx.translate(w / 2, h / 2);
-            ctx.scale(scale, scale);
-            ctx.translate(-w / 2, -h / 2);
-
-            // Background Animated Gradient
-            const grad = ctx.createLinearGradient(0, 0, w, h);
-            if (sc.style === 'space') {
-                grad.addColorStop(0, '#090d16');
-                grad.addColorStop(0.5, '#1e1b4b');
-                grad.addColorStop(1, '#311b92');
-            } else if (sc.style === 'fantasy') {
-                grad.addColorStop(0, '#2e1065');
-                grad.addColorStop(0.5, '#581c87');
-                grad.addColorStop(1, '#831843');
-            } else if (sc.style === 'cyber') {
-                grad.addColorStop(0, '#111827');
-                grad.addColorStop(0.5, '#881337');
-                grad.addColorStop(1, '#4c0519');
-            } else {
-                grad.addColorStop(0, '#064e3b');
-                grad.addColorStop(0.5, '#047857');
-                grad.addColorStop(1, '#022c22');
-            }
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, w, h);
-
-            // Floating Animated Particles / Stars
-            ctx.fillStyle = '#ffffff';
-            for (let i = 0; i < 30; i++) {
-                const x = (Math.sin(i * 99 + progress * 2) * 0.5 + 0.5) * w;
-                const y = (Math.cos(i * 33 + progress * 2) * 0.5 + 0.5) * h;
-                const size = (Math.sin(i + progress * 5) + 2) * 2;
-                ctx.globalAlpha = Math.sin(i + progress * 3) * 0.4 + 0.5;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.globalAlpha = 1.0;
-
-            // Center Dynamic Illustration Badge
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            ctx.beginPath();
-            ctx.roundRect(w * 0.1, h * 0.25, w * 0.8, h * 0.4, 24);
-            ctx.fill();
-
-            // Text Banner
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `bold ${w > 800 ? '42px' : '32px'} system-ui, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.fillText(sc.desc.substring(0, 28), w / 2, h * 0.42);
-
-            ctx.fillStyle = '#f43f5e';
-            ctx.font = `${w > 800 ? '26px' : '20px'} system-ui, sans-serif`;
-            ctx.fillText(`🎬 المشهد #${currentIndex + 1} (${sc.duration} ثوانٍ)`, w / 2, h * 0.52);
-
-            ctx.restore();
-        }
-
-        function animateFrame() {
-            if (!isPlaying && !isRecording) return;
-            animProgress += 0.01;
-            if (scenes.length > 0) {
-                drawAnimatedCanvas(scenes[currentIndex], animProgress);
-            }
-            animFrameId = requestAnimationFrame(animateFrame);
-        }
 
         function addNewScene() {
             const desc = document.getElementById('scene-desc').value.trim();
             const text = document.getElementById('scene-text').value.trim();
             const textEn = document.getElementById('scene-text-en').value.trim();
             const style = document.getElementById('scene-style').value;
-            const duration = parseInt(document.getElementById('scene-duration').value) || 6;
+            const duration = parseInt(document.getElementById('scene-duration').value) || 10;
 
             if (!desc) {
                 alert("يرجى إدخال وصف المشهد!");
@@ -475,59 +368,66 @@
             renderScenes();
         }
 
-        function renderScenes() {
-            const list = document.getElementById('scenes-list');
-            document.getElementById('scenes-count').innerText = scenes.length;
-            const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
+        async function suggestAITrendingIdea() {
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ جاري الابتكار...";
+            btn.disabled = true;
 
-            if (scenes.length === 0) {
-                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>';
-                return;
-            }
+            const systemPrompt = "أنت مخرج ومؤلف فيديوهات تيك توك وريلز سينمائية رائجة. قم بتأليف مشهد واحد مشوق ومؤثر ومطلوب على السوشيال ميديا مدته 10 ثواني (ليتم تجميعه في فيديو 30 ثانية فما فوق). أرجع الإجابة بتنسيق JSON فقط يحتوي على: style (إما space أو fantasy أو cyber أو nature), desc (وصف المشهد البصري بالعربي), text (الحوار/القصة بالعربي), textEn (ترجمة الحوار بالإنجليزي).";
+            const userPrompt = "اقترح فكرة مشهد سينمائي تريند جديد وغريب يشد الانتباه في أول 3 ثواني.";
 
-            list.innerHTML = `
-                <div style="background:#1e293b; padding:8px 12px; border-radius:6px; font-size:0.8rem; margin-bottom:10px; color:#fef08a;">
-                    ⏱️ مدة الفيديو الإجمالية: <strong>${totalDuration} ثانية</strong>
-                </div>
-            ` + scenes.map((sc, i) => `
-                <div class="scene-item">
-                    <div style="width:40px; height:40px; background:#1e293b; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
-                        🎬
-                    </div>
-                    <div class="scene-info">
-                        <strong>مشهد #${i + 1} (${sc.duration} ثانية)</strong>
-                        <p>${sc.desc}</p>
-                    </div>
-                    <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
-                </div>
-            `).join('');
-        }
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
-        function startMovie() {
-            currentIndex = 0;
-            renderPlayerFrame();
-        }
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userPrompt }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    style: { type: "STRING" },
+                                    desc: { type: "STRING" },
+                                    text: { type: "STRING" },
+                                    textEn: { type: "STRING" }
+                                },
+                                propertyOrdering: ["style", "desc", "text", "textEn"]
+                            }
+                        }
+                    })
+                });
 
-        function renderPlayerFrame() {
-            if (scenes.length === 0) return;
-            const sc = scenes[currentIndex];
-
-            animProgress = 0;
-            drawAnimatedCanvas(sc, 0);
-
-            const activeText = currentLang === 'en-US' ? sc.textEn : sc.text;
-            document.getElementById('play-sub').innerText = activeText;
-            speak(activeText);
-        }
-
-        function togglePlay() {
-            if (isPlaying) {
-                stopMovie();
-            } else {
-                isPlaying = true;
-                document.getElementById('play-btn').innerText = "إيقاف مؤقت ⏸️";
-                animateFrame();
-                runSceneSequence();
+                const data = await response.json();
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const result = JSON.parse(data.candidates[0].content.parts[0].text);
+                    document.getElementById('scene-style').value = result.style || 'fantasy';
+                    document.getElementById('scene-desc').value = result.desc;
+                    document.getElementById('scene-text').value = result.text;
+                    document.getElementById('scene-text-en').value = result.textEn;
+                    document.getElementById('scene-duration').value = "10";
+                }
+            } catch (err) {
+                // Fallback local trending idea if offline/throttled
+                const fallbackIdeas = [
+                    { style: 'cyber', desc: "بوابة زمنية تنفتح وسط مدينة نيون، يخرج منها كائن مغطى بالذهب الضوئي", text: "في عام 2099، اكتشفنا أن المستقبل كان يراقبنا طوال الوقت.", textEn: "In 2099, we discovered the future was watching us all along." },
+                    { style: 'fantasy', desc: "كتاب قديم يفتح تلقائياً وتخرج منه أضواء سحرية تمحو الظلام", text: "كل كلمة تكشف سرًا حُظر على البشر لآلاف السنين.", textEn: "Every word reveals a secret forbidden to humans for millennia." },
+                    { style: 'space', desc: "رائد فضاء يلمس كريستالة ضخمة على كوكب مجهول فتبدأ بالاهتزاز", text: "لم تكن هذه الصخرة جماداً... بل كانت قلب الكوكب النباض.", textEn: "This rock wasn't dead... it was the planet's beating heart." }
+                ];
+                const item = fallbackIdeas[Math.floor(Math.random() * fallbackIdeas.length)];
+                document.getElementById('scene-style').value = item.style;
+                document.getElementById('scene-desc').value = item.desc;
+                document.getElementById('scene-text').value = item.text;
+                document.getElementById('scene-text-en').value = item.textEn;
+                document.getElementById('scene-duration').value = "10";
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         }
 
@@ -601,142 +501,6 @@
             if (isRecording) stopRecording();
         }
 
-        function showTab(tab) {
-            const editor = document.getElementById('tab-editor');
-            const player = document.getElementById('tab-player');
-
-            if (tab === 'editor') {
-                editor.classList.remove('hidden');
-                player.classList.add('hidden');
-                stopMovie();
-            } else {
-                if (scenes.length === 0) {
-                    alert("يرجى إضافة مشهد واحد على الأقل قبل العرض!");
-                    return;
-                }
-                editor.classList.add('hidden');
-                player.classList.remove('hidden');
-                startMovie();
-            }
-        }
-
-        function addNewScene() {
-            const desc = document.getElementById('scene-desc').value.trim();
-            const text = document.getElementById('scene-text').value.trim();
-            const textEn = document.getElementById('scene-text-en').value.trim();
-            const seriesTitle = document.getElementById('series-title').value || "مسلسل قصير";
-
-            if (!desc) {
-                alert("يرجى إدخال وصف المشهد!");
-                return;
-            }
-
-            const imgUrl = drawSceneCanvas(desc, seriesTitle, scenes.length);
-
-            scenes.push({
-                desc: desc,
-                text: text || desc,
-                textEn: textEn || text || desc,
-                img: imgUrl
-            });
-
-            document.getElementById('scene-desc').value = '';
-            document.getElementById('scene-text').value = '';
-            document.getElementById('scene-text-en').value = '';
-
-            renderScenes();
-        }
-
-        function renderScenes() {
-            const list = document.getElementById('scenes-list');
-            document.getElementById('scenes-count').innerText = scenes.length;
-
-            if (scenes.length === 0) {
-                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>';
-                return;
-            }
-
-            list.innerHTML = scenes.map((sc, i) => `
-                <div class="scene-item">
-                    <img src="${sc.img}" class="scene-img-canvas">
-                    <div class="scene-info">
-                        <strong>مشهد #${i + 1}</strong>
-                        <p>${sc.desc}</p>
-                    </div>
-                    <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
-                </div>
-            `).join('');
-        }
-
-        function deleteScene(index) {
-            scenes.splice(index, 1);
-            renderScenes();
-        }
-
-        function removeAllScenes() {
-            scenes = [];
-            renderScenes();
-        }
-
-        function suggestIdea() {
-            const ideas = [
-                { desc: "سفينة فضائية تعبر سحابة من النجوم الملونة", text: "تم تفعيل القفزة الضوئية باتجاه المجرة المجهولة.", textEn: "Warp drive engaged towards the unknown galaxy." },
-                { desc: "قلعة قديمة فوق قمة جبل تحيط بها الغيوم والمطر", text: "أخيراً وصل الملك إلى القلعة المفقودة.", textEn: "Finally, the King arrived at the lost castle." },
-                { desc: "مدينة مستقبلية مليئة بالإضاءات النيونية في منتصف الليل", text: "في هذه المدينة، كل شيء ممكن إذا كنت تملك المفتاح.", textEn: "In this city, everything is possible if you hold the key." }
-            ];
-            const random = ideas[Math.floor(Math.random() * ideas.length)];
-            document.getElementById('scene-desc').value = random.desc;
-            document.getElementById('scene-text').value = random.text;
-            document.getElementById('scene-text-en').value = random.textEn;
-        }
-
-        function startMovie() {
-            currentIndex = 0;
-            renderPlayerFrame();
-        }
-
-        function renderPlayerFrame() {
-            if (scenes.length === 0) return;
-            const sc = scenes[currentIndex];
-
-            const canvas = document.getElementById('cinema-canvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.onload = function() {
-                ctx.drawImage(img, 0, 0, 800, 450);
-            };
-            img.src = sc.img;
-
-            const activeText = currentLang === 'en-US' ? sc.textEn : sc.text;
-            document.getElementById('play-sub').innerText = activeText;
-            speak(activeText);
-        }
-
-        function togglePlay() {
-            if (isPlaying) {
-                stopMovie();
-            } else {
-                isPlaying = true;
-                document.getElementById('play-btn').innerText = "إيقاف مؤقت ⏸️";
-                playTimer = setInterval(() => {
-                    if (currentIndex < scenes.length - 1) {
-                        currentIndex++;
-                        renderPlayerFrame();
-                    } else {
-                        currentIndex = 0;
-                        renderPlayerFrame();
-                    }
-                }, 4500);
-            }
-        }
-
-        function stopMovie() {
-            isPlaying = false;
-            clearInterval(playTimer);
-            document.getElementById('play-btn').innerText = "تشغيل ▶️";
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        }
-
         function nextScene() {
             if (currentIndex < scenes.length - 1) {
                 currentIndex++;
@@ -763,7 +527,26 @@
 
         function changeLang() {
             currentLang = document.getElementById('voice-lang').value;
-            renderPlayerFrame();
+            if (scenes.length > 0) renderPlayerFrame();
+        }
+
+        function showTab(tab) {
+            const editor = document.getElementById('tab-editor');
+            const player = document.getElementById('tab-player');
+
+            if (tab === 'editor') {
+                editor.classList.remove('hidden');
+                player.classList.add('hidden');
+                stopMovie();
+            } else {
+                if (scenes.length === 0) {
+                    alert("يرجى إضافة مشهد واحد على الأقل قبل العرض!");
+                    return;
+                }
+                editor.classList.add('hidden');
+                player.classList.remove('hidden');
+                startMovie();
+            }
         }
     </script>
 </body>
