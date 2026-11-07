@@ -155,7 +155,7 @@
         .screen {
             position: relative;
             width: 100%;
-            max-width: 420px;
+            max-width: 380px;
             aspect-ratio: 9/16;
             background-color: #000;
             border-radius: 16px;
@@ -165,6 +165,11 @@
             align-items: center;
             border: 2px solid #e11d48;
             box-shadow: 0 10px 30px rgba(225, 29, 72, 0.25);
+            transition: all 0.3s ease;
+        }
+        .screen.landscape {
+            max-width: 640px;
+            aspect-ratio: 16/9;
         }
         .screen canvas {
             width: 100%;
@@ -368,13 +373,43 @@
             renderScenes();
         }
 
+        function renderScenes() {
+            const list = document.getElementById('scenes-list');
+            document.getElementById('scenes-count').innerText = scenes.length;
+
+            if (scenes.length === 0) {
+                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>';
+                return;
+            }
+
+            list.innerHTML = scenes.map((sc, i) => `
+                <div class="scene-item">
+                    <div class="scene-info">
+                        <strong>مشهد #${i + 1} (${sc.duration} ثواني)</strong>
+                        <p>${sc.desc}</p>
+                    </div>
+                    <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteScene(index) {
+            scenes.splice(index, 1);
+            renderScenes();
+        }
+
+        function removeAllScenes() {
+            scenes = [];
+            renderScenes();
+        }
+
         async function suggestAITrendingIdea() {
             const btn = event.target;
             const originalText = btn.innerText;
             btn.innerText = "⏳ جاري الابتكار...";
             btn.disabled = true;
 
-            const systemPrompt = "أنت مخرج ومؤلف فيديوهات تيك توك وريلز سينمائية رائجة. قم بتأليف مشهد واحد مشوق ومؤثر ومطلوب على السوشيال ميديا مدته 10 ثواني (ليتم تجميعه في فيديو 30 ثانية فما فوق). أرجع الإجابة بتنسيق JSON فقط يحتوي على: style (إما space أو fantasy أو cyber أو nature), desc (وصف المشهد البصري بالعربي), text (الحوار/القصة بالعربي), textEn (ترجمة الحوار بالإنجليزي).";
+            const systemPrompt = "أنت مخرج ومؤلف فيديوهات تيك توك وريلز سينمائية رائجة. قم بتأليف مشهد واحد مشوق ومؤثر ومطلوب على السوشيال ميديا مدته 10 ثواني. أرجع الإجابة بتنسيق JSON فقط يحتوي على: style (إما space أو fantasy أو cyber أو nature), desc (وصف المشهد البصري بالعربي), text (الحوار/القصة بالعربي), textEn (ترجمة الحوار بالإنجليزي).";
             const userPrompt = "اقترح فكرة مشهد سينمائي تريند جديد وغريب يشد الانتباه في أول 3 ثواني.";
 
             const apiKey = "";
@@ -413,7 +448,6 @@
                     document.getElementById('scene-duration').value = "10";
                 }
             } catch (err) {
-                // Fallback local trending idea if offline/throttled
                 const fallbackIdeas = [
                     { style: 'cyber', desc: "بوابة زمنية تنفتح وسط مدينة نيون، يخرج منها كائن مغطى بالذهب الضوئي", text: "في عام 2099، اكتشفنا أن المستقبل كان يراقبنا طوال الوقت.", textEn: "In 2099, we discovered the future was watching us all along." },
                     { style: 'fantasy', desc: "كتاب قديم يفتح تلقائياً وتخرج منه أضواء سحرية تمحو الظلام", text: "كل كلمة تكشف سرًا حُظر على البشر لآلاف السنين.", textEn: "Every word reveals a secret forbidden to humans for millennia." },
@@ -428,6 +462,117 @@
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
+            }
+        }
+
+        function setAspectRatio(ratio) {
+            const screen = document.getElementById('main-screen');
+            const canvas = document.getElementById('cinema-canvas');
+
+            if (ratio === '16/9') {
+                screen.classList.add('landscape');
+                canvas.width = 1280;
+                canvas.height = 720;
+            } else {
+                screen.classList.remove('landscape');
+                canvas.width = 720;
+                canvas.height = 1280;
+            }
+            if (scenes.length > 0) renderPlayerFrame();
+        }
+
+        function drawCinemaCanvas(sc) {
+            const canvas = document.getElementById('cinema-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            animProgress += 0.005;
+
+            // Gradient themes
+            let grad;
+            if (sc.style === 'space') {
+                grad = ctx.createRadialGradient(w/2, h/2, 50, w/2, h/2, w);
+                grad.addColorStop(0, '#1e1b4b');
+                grad.addColorStop(0.5, '#0f172a');
+                grad.addColorStop(1, '#020617');
+            } else if (sc.style === 'cyber') {
+                grad = ctx.createLinearGradient(0, 0, w, h);
+                grad.addColorStop(0, '#831843');
+                grad.addColorStop(0.5, '#311042');
+                grad.addColorStop(1, '#0f172a');
+            } else if (sc.style === 'nature') {
+                grad = ctx.createLinearGradient(0, 0, 0, h);
+                grad.addColorStop(0, '#7c2d12');
+                grad.addColorStop(0.5, '#365314');
+                grad.addColorStop(1, '#064e3b');
+            } else {
+                grad = ctx.createRadialGradient(w/2, h/2, 100, w/2, h/2, w);
+                grad.addColorStop(0, '#581c87');
+                grad.addColorStop(0.6, '#1e1b4b');
+                grad.addColorStop(1, '#0b0f19');
+            }
+
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // Animated particles / stars
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            for (let i = 0; i < 40; i++) {
+                let x = (Math.sin(i * 99 + animProgress) * 0.5 + 0.5) * w;
+                let y = (Math.cos(i * 33 + animProgress) * 0.5 + 0.5) * h;
+                let size = (Math.sin(i + animProgress * 2) + 1.5) * 2;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Cinematic title
+            ctx.fillStyle = '#f43f5e';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(document.getElementById('series-title').value || 'المسلسل القصير', w / 2, 80);
+
+            // Scene Description text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '24px sans-serif';
+            wrapText(ctx, sc.desc, w / 2, h / 2 - 40, w - 100, 34);
+
+            if (isPlaying) {
+                animFrameId = requestAnimationFrame(() => drawCinemaCanvas(sc));
+            }
+        }
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = ctx.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    ctx.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, y);
+        }
+
+        function startMovie() {
+            currentIndex = 0;
+            isPlaying = true;
+            document.getElementById('play-btn').innerText = "إيقاف مؤقت ⏸️";
+            runSceneSequence();
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopMovie();
+            } else {
+                startMovie();
             }
         }
 
@@ -446,6 +591,18 @@
                     stopMovie();
                 }
             }, sc.duration * 1000);
+        }
+
+        function renderPlayerFrame() {
+            if (scenes.length === 0) return;
+            const sc = scenes[currentIndex];
+
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            drawCinemaCanvas(sc);
+
+            const activeSub = (currentLang === 'en-US') ? sc.textEn : sc.text;
+            document.getElementById('play-sub').innerText = activeSub;
+            speak(activeSub);
         }
 
         function toggleRecord() {
