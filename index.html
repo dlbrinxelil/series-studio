@@ -163,14 +163,31 @@
         .screen {
             position: relative;
             width: 100%;
-            aspect-ratio: 16/9;
+            max-width: 450px;
+            aspect-ratio: 9/16;
             background-color: #000;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #1e2d4a;
+            border: 2px solid #e11d48;
+            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.2);
+        }
+        .screen canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .screen-ratio-btn {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #334155;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
         }
         .screen canvas {
             width: 100%;
@@ -241,8 +258,21 @@
                     <div class="card">
                         <h2>إضافة مشهد جديد</h2>
                         <div class="form-group">
-                            <label>وصف المشهد البصري (ما تراه الكاميرا)</label>
-                            <textarea id="scene-desc" rows="3" placeholder="مثال: رائد فضاء يقف على كوكب غريب ملون..."></textarea>
+                            <label>نوع رسم المشهد البصري (SVG Illustration Style)</label>
+                            <select id="scene-style">
+                                <option value="space">🚀 فضاء ومجرات واستكشاف</option>
+                                <option value="fantasy">🏰 قلعة وفنتازيا وسحر</option>
+                                <option value="cyber">🌆 مدينة مستقبلية ونيون</option>
+                                <option value="nature">🌲 طبيعة وجبال وغروب</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>وصف المشهد البصري</label>
+                            <textarea id="scene-desc" rows="2" placeholder="مثال: رائد فضاء يقف على كوكب غريب ملون..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>مدة المشهد (بالثواني)</label>
+                            <input type="number" id="scene-duration" value="6" min="2" max="30">
                         </div>
                         <div class="form-group">
                             <label>النص أو الحوار بالعربي</label>
@@ -277,14 +307,19 @@
         <!-- PLAYER SECTION -->
         <div id="tab-player" class="hidden">
             <div class="player-container">
-                <div class="screen">
-                    <canvas id="cinema-canvas" width="800" height="450"></canvas>
+                <div style="margin-bottom: 10px; display: flex; gap: 8px;">
+                    <button class="screen-ratio-btn" onclick="setAspectRatio('9/16')">📱 تيك توك وريلز (9:16)</button>
+                    <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 يوتيوب عريض (16:9)</button>
+                </div>
+                <div class="screen" id="main-screen">
+                    <canvas id="cinema-canvas" width="720" height="1280"></canvas>
                     <div id="play-sub" class="subtitles">...</div>
                 </div>
 
                 <div class="controls">
-                    <div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                         <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">تشغيل ▶️</button>
+                        <button class="btn" style="background:#16a34a;" id="record-btn" onclick="toggleRecord()">🔴 تسجيل وتنزيل فيديو</button>
                         <button class="btn" onclick="prevScene()">السابق</button>
                         <button class="btn" onclick="nextScene()">التالي</button>
                     </div>
@@ -305,61 +340,265 @@
         let isPlaying = false;
         let playTimer = null;
         let currentLang = 'ar-SA';
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let animFrameId = null;
+        let animProgress = 0;
 
-        const colorPalettes = [
-            ['#0f172a', '#1e1b4b', '#4338ca', '#38bdf8'],
-            ['#18181b', '#3f3f46', '#71717a', '#f43f5e'],
-            ['#064e3b', '#047857', '#10b981', '#a7f3d0'],
-            ['#4c1d95', '#6d28d9', '#8b5cf6', '#c084fc']
-        ];
-
-        window.onload = function() {
-            document.getElementById('scene-desc').value = "رائد فضاء ينظر إلى الأفق في غروب ثلاث شموس ملونة";
-            document.getElementById('scene-text').value = "وصلنا إلى الكوكب، وتبدأ الرحلة الآن.";
-            document.getElementById('scene-text-en').value = "We have arrived at the planet, the journey begins now.";
+        const styleIcons = {
+            space: `<path fill="#38bdf8" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>`,
+            fantasy: `<path fill="#c084fc" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>`,
+            cyber: `<path fill="#f43f5e" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>`,
+            nature: `<path fill="#4ade80" d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.8 13.7 7 10 7 10l-6 8h22L14 6z"/>`
         };
 
-        function drawSceneCanvas(desc, titleText, paletteIndex) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 800;
-            canvas.height = 450;
+        window.onload = function() {
+            document.getElementById('scene-desc').value = "رحلة إلى كوكب مجهول في أعماق الفضاء";
+            document.getElementById('scene-text').value = "وصلنا إلى الكوكب، وتبدأ المغامرة الآن لتكشف لنا أسرار الكون.";
+            document.getElementById('scene-text-en').value = "We arrived at the planet, and the adventure begins now.";
+        };
+
+        function setAspectRatio(ratio) {
+            const screen = document.getElementById('main-screen');
+            const canvas = document.getElementById('cinema-canvas');
+            screen.style.aspectRatio = ratio;
+            if (ratio === '9/16') {
+                canvas.width = 720;
+                canvas.height = 1280;
+            } else {
+                canvas.width = 1280;
+                canvas.height = 720;
+            }
+            renderPlayerFrame();
+        }
+
+        function drawAnimatedCanvas(sc, progress) {
+            const canvas = document.getElementById('cinema-canvas');
             const ctx = canvas.getContext('2d');
-            const colors = colorPalettes[paletteIndex % colorPalettes.length];
+            const w = canvas.width;
+            const h = canvas.height;
 
-            // Gradient Background
-            const grad = ctx.createLinearGradient(0, 0, 800, 450);
-            grad.addColorStop(0, colors[0]);
-            grad.addColorStop(0.5, colors[1]);
-            grad.addColorStop(1, colors[2]);
+            // Animated Zoom Effect
+            const scale = 1 + progress * 0.08;
+            ctx.save();
+            ctx.translate(w / 2, h / 2);
+            ctx.scale(scale, scale);
+            ctx.translate(-w / 2, -h / 2);
+
+            // Background Animated Gradient
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            if (sc.style === 'space') {
+                grad.addColorStop(0, '#090d16');
+                grad.addColorStop(0.5, '#1e1b4b');
+                grad.addColorStop(1, '#311b92');
+            } else if (sc.style === 'fantasy') {
+                grad.addColorStop(0, '#2e1065');
+                grad.addColorStop(0.5, '#581c87');
+                grad.addColorStop(1, '#831843');
+            } else if (sc.style === 'cyber') {
+                grad.addColorStop(0, '#111827');
+                grad.addColorStop(0.5, '#881337');
+                grad.addColorStop(1, '#4c0519');
+            } else {
+                grad.addColorStop(0, '#064e3b');
+                grad.addColorStop(0.5, '#047857');
+                grad.addColorStop(1, '#022c22');
+            }
             ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, 800, 450);
+            ctx.fillRect(0, 0, w, h);
 
-            // Artistic circles
-            ctx.fillStyle = colors[3];
-            ctx.globalAlpha = 0.25;
-            ctx.beginPath();
-            ctx.arc(650, 120, 180, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(150, 350, 120, 0, Math.PI * 2);
-            ctx.fill();
+            // Floating Animated Particles / Stars
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 30; i++) {
+                const x = (Math.sin(i * 99 + progress * 2) * 0.5 + 0.5) * w;
+                const y = (Math.cos(i * 33 + progress * 2) * 0.5 + 0.5) * h;
+                const size = (Math.sin(i + progress * 5) + 2) * 2;
+                ctx.globalAlpha = Math.sin(i + progress * 3) * 0.4 + 0.5;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
             ctx.globalAlpha = 1.0;
 
-            // Text Banner Overlay
+            // Center Dynamic Illustration Badge
             ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            ctx.fillRect(40, 40, 720, 370);
+            ctx.beginPath();
+            ctx.roundRect(w * 0.1, h * 0.25, w * 0.8, h * 0.4, 24);
+            ctx.fill();
 
-            // Canvas Text
+            // Text Banner
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 32px sans-serif';
+            ctx.font = `bold ${w > 800 ? '42px' : '32px'} system-ui, sans-serif`;
             ctx.textAlign = 'center';
-            ctx.fillText(desc.substring(0, 35), 400, 220);
+            ctx.fillText(sc.desc.substring(0, 28), w / 2, h * 0.42);
 
-            ctx.fillStyle = colors[3];
-            ctx.font = '20px sans-serif';
-            ctx.fillText("🎬 " + titleText, 400, 260);
+            ctx.fillStyle = '#f43f5e';
+            ctx.font = `${w > 800 ? '26px' : '20px'} system-ui, sans-serif`;
+            ctx.fillText(`🎬 المشهد #${currentIndex + 1} (${sc.duration} ثوانٍ)`, w / 2, h * 0.52);
 
-            return canvas.toDataURL();
+            ctx.restore();
+        }
+
+        function animateFrame() {
+            if (!isPlaying && !isRecording) return;
+            animProgress += 0.01;
+            if (scenes.length > 0) {
+                drawAnimatedCanvas(scenes[currentIndex], animProgress);
+            }
+            animFrameId = requestAnimationFrame(animateFrame);
+        }
+
+        function addNewScene() {
+            const desc = document.getElementById('scene-desc').value.trim();
+            const text = document.getElementById('scene-text').value.trim();
+            const textEn = document.getElementById('scene-text-en').value.trim();
+            const style = document.getElementById('scene-style').value;
+            const duration = parseInt(document.getElementById('scene-duration').value) || 6;
+
+            if (!desc) {
+                alert("يرجى إدخال وصف المشهد!");
+                return;
+            }
+
+            scenes.push({
+                desc: desc,
+                text: text || desc,
+                textEn: textEn || text || desc,
+                style: style,
+                duration: duration
+            });
+
+            document.getElementById('scene-desc').value = '';
+            document.getElementById('scene-text').value = '';
+            document.getElementById('scene-text-en').value = '';
+            renderScenes();
+        }
+
+        function renderScenes() {
+            const list = document.getElementById('scenes-list');
+            document.getElementById('scenes-count').innerText = scenes.length;
+            const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
+
+            if (scenes.length === 0) {
+                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>';
+                return;
+            }
+
+            list.innerHTML = `
+                <div style="background:#1e293b; padding:8px 12px; border-radius:6px; font-size:0.8rem; margin-bottom:10px; color:#fef08a;">
+                    ⏱️ مدة الفيديو الإجمالية: <strong>${totalDuration} ثانية</strong>
+                </div>
+            ` + scenes.map((sc, i) => `
+                <div class="scene-item">
+                    <div style="width:40px; height:40px; background:#1e293b; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                        🎬
+                    </div>
+                    <div class="scene-info">
+                        <strong>مشهد #${i + 1} (${sc.duration} ثانية)</strong>
+                        <p>${sc.desc}</p>
+                    </div>
+                    <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function startMovie() {
+            currentIndex = 0;
+            renderPlayerFrame();
+        }
+
+        function renderPlayerFrame() {
+            if (scenes.length === 0) return;
+            const sc = scenes[currentIndex];
+
+            animProgress = 0;
+            drawAnimatedCanvas(sc, 0);
+
+            const activeText = currentLang === 'en-US' ? sc.textEn : sc.text;
+            document.getElementById('play-sub').innerText = activeText;
+            speak(activeText);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopMovie();
+            } else {
+                isPlaying = true;
+                document.getElementById('play-btn').innerText = "إيقاف مؤقت ⏸️";
+                animateFrame();
+                runSceneSequence();
+            }
+        }
+
+        function runSceneSequence() {
+            if (!isPlaying) return;
+            const sc = scenes[currentIndex];
+            renderPlayerFrame();
+
+            playTimer = setTimeout(() => {
+                if (!isPlaying) return;
+                if (currentIndex < scenes.length - 1) {
+                    currentIndex++;
+                    runSceneSequence();
+                } else {
+                    currentIndex = 0;
+                    stopMovie();
+                }
+            }, sc.duration * 1000);
+        }
+
+        function toggleRecord() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            if (scenes.length === 0) return;
+            const canvas = document.getElementById('cinema-canvas');
+            const stream = canvas.captureStream(30);
+
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+            mediaRecorder.ondataavailable = function(e) {
+                if (e.data.size > 0) recordedChunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = function() {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `my-series-video-${Date.now()}.webm`;
+                a.click();
+                alert("تم تسجيل الفيديو بنجاح وتحميله على هاتفك! 📱🎉");
+            };
+
+            mediaRecorder.start();
+            isRecording = true;
+            document.getElementById('record-btn').innerText = "⬛ جاري التسجيل (اضغط للإيقاف والتنزيل)";
+            if (!isPlaying) togglePlay();
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                document.getElementById('record-btn').innerText = "🔴 تسجيل وتنزيل فيديو";
+            }
+        }
+
+        function stopMovie() {
+            isPlaying = false;
+            clearTimeout(playTimer);
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            document.getElementById('play-btn').innerText = "تشغيل ▶️";
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (isRecording) stopRecording();
         }
 
         function showTab(tab) {
