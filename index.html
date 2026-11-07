@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ستوديو المسلسلات التفاعلي</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #151d2a;
+            border-bottom: 1px solid #1e293b;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-title h1 {
+            font-size: 1.1rem;
+            color: #f43f5e;
+        }
+        .logo-title p {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            background-color: #1e293b;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #e11d48;
+        }
+        .btn-primary:hover {
+            background-color: #be123c;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: #131b2e;
+            border: 1px solid #1e2d4a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            color: #f43f5e;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            background-color: #0b0f19;
+            border: 1px solid #1e2d4a;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        /* Scenes List */
+        .scene-item {
+            background-color: #0b0f19;
+            border: 1px solid #1e2d4a;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .scene-img {
+            width: 90px;
+            height: 55px;
+            background-color: #151d2a;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .scene-info {
+            flex: 1;
+            font-size: 0.8rem;
+        }
+        .scene-info strong {
+            color: #f43f5e;
+            display: block;
+        }
+
+        /* Player Screen */
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #1e2d4a;
+        }
+        .screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Subtitle Banner */
+        .subtitles {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: #fef08a;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            text-align: center;
+            max-width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls {
+            width: 100%;
+            background-color: #131b2e;
+            padding: 12px;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-title">
+            <h1>🎬 ستوديو المسلسلات القصيرة</h1>
+            <p>صانع ومشغل القصص التفاعلي</p>
+        </div>
+        <div class="nav-btns">
+            <button class="btn btn-primary" onclick="showTab('editor')">📝 الكتابة والسيناريو</button>
+            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ عرض المسلسل</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- EDITOR SECTION -->
+        <div id="tab-editor">
+            <div class="grid">
+                <div>
+                    <div class="card">
+                        <h2>إعدادات القصة</h2>
+                        <div class="form-group">
+                            <label>عنوان الحلقة أو المسلسل</label>
+                            <input type="text" id="series-title" value="مغامرة الفضاء المجهول">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>إضافة مشهد جديد</h2>
+                        <div class="form-group">
+                            <label>وصف المشهد البصري (ما تراه الكاميرا)</label>
+                            <textarea id="scene-desc" rows="3" placeholder="مثال: رائد فضاء يقف على كوكب غريب ملون..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>النص أو الحوار (يترجم أسفل الشاشة)</label>
+                            <textarea id="scene-text" rows="2" placeholder="مثال: مرحباً بكم في العالم الجديد..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد</button>
+                            <button class="btn" onclick="suggestIdea()">💡 فكرة تلقائية</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h2 style="margin: 0;">قائمة المشاهد (<span id="scenes-count">0</span>)</h2>
+                            <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeAllScenes()">مسح الكل</button>
+                        </div>
+                        <div id="scenes-list">
+                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAYER SECTION -->
+        <div id="tab-player" class="hidden">
+            <div class="player-container">
+                <div class="screen">
+                    <img id="play-img" src="" alt="مشهد المسلسل">
+                    <div id="play-sub" class="subtitles">...</div>
+                </div>
+
+                <div class="controls">
+                    <div>
+                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">تشغيل ▶️</button>
+                        <button class="btn" onclick="prevScene()">السابق</button>
+                        <button class="btn" onclick="nextScene()">التالي</button>
+                    </div>
+                    <div>
+                        <select id="voice-lang" onchange="changeLang()" style="background:#0b0f19; color:#fff; border:1px solid #1e2d4a; padding:6px; border-radius:6px; font-size:0.8rem;">
+                            <option value="ar-SA">الصوت: عربي 🇸🇦</option>
+                            <option value="en-US">Voice: English 🇺🇸</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let scenes = [];
+        let currentIndex = 0;
+        let isPlaying = false;
+        let playTimer = null;
+        let currentLang = 'ar-SA';
+
+        window.onload = function() {
+            document.getElementById('scene-desc').value = "رائد فضاء ينظر إلى الأفق في غروب ثلاث شموس ملونة";
+            document.getElementById('scene-text').value = "وصلنا إلى الكوكب، وتبدأ الرحلة الآن.";
+        };
+
+        function showTab(tab) {
+            const editor = document.getElementById('tab-editor');
+            const player = document.getElementById('tab-player');
+
+            if (tab === 'editor') {
+                editor.classList.remove('hidden');
+                player.classList.add('hidden');
+                stopMovie();
+            } else {
+                if (scenes.length === 0) {
+                    alert("يرجى إضافة مشهد واحد على الأقل قبل العرض!");
+                    return;
+                }
+                editor.classList.add('hidden');
+                player.classList.remove('hidden');
+                startMovie();
+            }
+        }
+
+        function addNewScene() {
+            const desc = document.getElementById('scene-desc').value.trim();
+            const text = document.getElementById('scene-text').value.trim();
+
+            if (!desc) {
+                alert("يرجى إدخال وصف المشهد!");
+                return;
+            }
+
+            const textEncoded = encodeURIComponent(desc.substring(0, 25));
+            const imgUrl = `https://placehold.co/800x450/1e1b4b/e0e7ff?text=${textEncoded}`;
+
+            scenes.push({
+                desc: desc,
+                text: text || desc,
+                img: imgUrl
+            });
+
+            document.getElementById('scene-desc').value = '';
+            document.getElementById('scene-text').value = '';
+            renderScenes();
+        }
+
+        function renderScenes() {
+            const list = document.getElementById('scenes-list');
+            document.getElementById('scenes-count').innerText = scenes.length;
+
+            if (scenes.length === 0) {
+                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">لا توجد مشاهد مضافة بعد. اكتب مشهدك الأول!</p>';
+                return;
+            }
+
+            list.innerHTML = scenes.map((sc, i) => `
+                <div class="scene-item">
+                    <img src="${sc.img}" class="scene-img">
+                    <div class="scene-info">
+                        <strong>مشهد #${i + 1}</strong>
+                        <p>${sc.desc}</p>
+                    </div>
+                    <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteScene(index) {
+            scenes.splice(index, 1);
+            renderScenes();
+        }
+
+        function removeAllScenes() {
+            scenes = [];
+            renderScenes();
+        }
+
+        function suggestIdea() {
+            const ideas = [
+                { desc: "سفينة فضائية تعبر سحابة من النجوم والمتألقات الزرقاء", text: "تم تفعيل القفزة الضوئية باتجاه المجرة المجهولة." },
+                { desc: "قلعة قديمة فوق قمة جبل تحيط بها الغيوم والمطر", text: "أخيراً وصل الملك إلى القلعة المفقودة." },
+                { desc: "مدينة مستقبلية مليئة بالإضاءات النيونية في منتصف الليل", text: "في هذه المدينة، كل شيء ممكن إذا كنت تملك المفتاح." }
+            ];
+            const random = ideas[Math.floor(Math.random() * ideas.length)];
+            document.getElementById('scene-desc').value = random.desc;
+            document.getElementById('scene-text').value = random.text;
+        }
+
+        function startMovie() {
+            currentIndex = 0;
+            renderPlayerFrame();
+        }
+
+        function renderPlayerFrame() {
+            if (scenes.length === 0) return;
+            const sc = scenes[currentIndex];
+
+            document.getElementById('play-img').src = sc.img;
+            document.getElementById('play-sub').innerText = sc.text;
+            speak(sc.text);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopMovie();
+            } else {
+                isPlaying = true;
+                document.getElementById('play-btn').innerText = "إيقاف مؤقت ⏸️";
+                playTimer = setInterval(() => {
+                    if (currentIndex < scenes.length - 1) {
+                        currentIndex++;
+                        renderPlayerFrame();
+                    } else {
+                        currentIndex = 0;
+                        renderPlayerFrame();
+                    }
+                }, 4000);
+            }
+        }
+
+        function stopMovie() {
+            isPlaying = false;
+            clearInterval(playTimer);
+            document.getElementById('play-btn').innerText = "تشغيل ▶️";
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+
+        function nextScene() {
+            if (currentIndex < scenes.length - 1) {
+                currentIndex++;
+                renderPlayerFrame();
+            }
+        }
+
+        function prevScene() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderPlayerFrame();
+            }
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = currentLang;
+                speech.rate = 0.9;
+                window.speechSynthesis.speak(speech);
+            }
+        }
+
+        function changeLang() {
+            currentLang = document.getElementById('voice-lang').value;
+            renderPlayerFrame();
+        }
+    </script>
+</body>
+</html>
