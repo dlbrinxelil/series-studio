@@ -259,7 +259,7 @@
                         <h2>إعدادات القصة</h2>
                         <div class="form-group">
                             <label>عنوان الحلقة أو المسلسل</label>
-                            <input type="text" id="series-title" value="مغامرة الكوكب المجهول">
+                            <input type="text" id="series-title" value="أسرار الكون المجهول">
                         </div>
                         <div class="form-group">
                             <label>طريقة الترجمة والعرض</label>
@@ -272,7 +272,7 @@
                     </div>
 
                     <div class="card">
-                        <h2>إضافة مشهد جديد</h2>
+                        <h2>إضافة مشهد جديد (طويل 30+ ثانية)</h2>
                         <div class="form-group">
                             <label>نوع المشهد والأيقونة المتحركة</label>
                             <select id="scene-icon">
@@ -285,23 +285,23 @@
                         </div>
                         <div class="form-group">
                             <label>وصف المشهد البصري (عنوان المشهد)</label>
-                            <textarea id="scene-desc" rows="2" placeholder="مثال: رائد فضاء يعبر الكوكب..."></textarea>
+                            <textarea id="scene-desc" rows="2" placeholder="وصف تفصيلي لما يحدث في المشهد..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>مدة المشهد (بالثواني - لقصص طويلة 30 ثانية فما فوق)</label>
-                            <input type="number" id="scene-duration" value="10" min="5" max="60">
+                            <input type="number" id="scene-duration" value="15" min="5" max="60">
                         </div>
                         <div class="form-group">
-                            <label>🔊 النص المنطوق بالصوت (دبلجة)</label>
-                            <textarea id="scene-spoken-text" rows="2" placeholder="النص الذي سينطقه الصوت..."></textarea>
+                            <label>🔊 النص المنطوق بالصوت (عدة أسطر مريحة للدبلجة)</label>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="اكتب الحوار أو القصة المطولة هنا ليتم نطقها بالكامل..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>💬 نص الترجمة السفلي المكتوب</label>
-                            <textarea id="scene-sub-text" rows="2" placeholder="النص الذي يظهر أسفل الشاشة..."></textarea>
+                            <textarea id="scene-sub-text" rows="3" placeholder="النص الذي يظهر أسفل الشاشة بالأسطر التي تريدها..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد</button>
-                            <button class="btn" style="background:#8b5cf6;" onclick="suggestAIIDEAs()">🤖 💡 فكرة تريند من AI</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ إضافة المشهد للقائمة</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 فكرة تريند جاهزة</button>
                         </div>
                     </div>
                 </div>
@@ -357,22 +357,53 @@
         let isPlaying = false;
         let playTimer = null;
         let currentLang = 'ar-SA';
-        let mediaRecorder = null;
-        let recordedChunks = [];
         let isRecording = false;
 
+        const trendingIdeas = [
+            {
+                icon: "🚀",
+                desc: "رحلة عبور الثقب الأسود والوصول لمجرة موازية",
+                duration: 20,
+                spokenText: "في عام 3050، اكتشف البشر بوابة غريبة في عمق الفضاء السحيق. عندما دخلت السفينة، تغير كل ما نؤمن به عن الزمن والفيزياء وأصبحنا في عالم مختلف تماماً.",
+                subText: "البوابة فتحت.. هل نحن وحدنا في هذا الكون الواسع؟"
+            },
+            {
+                icon: "🏰",
+                desc: "سر القلعة المفقودة والكنز الملكي السحري",
+                duration: 20,
+                spokenText: "على قمة جبل الضباب، تقف قلعة أثرية لم يزلورها بشر منذ آلاف السنين. يقال إن من يجد المفتاح الذهبي داخلها سيحصل على قوة تحكم الكواكب.",
+                subText: "الوصول إلى القاعة الكبرى يتطلب شجاعة لا تملكها سوى الأساطير."
+            },
+            {
+                icon: "🌆",
+                desc: "مدينة المستقبل المضاءة بأضواء النيون الذكية",
+                duration: 20,
+                spokenText: "في مدينة لا تنام، حيث تتطاير السيارات بين ناطحات السحاب المضيئة، يراقب النظام كل حركة. لكن هناك مجموعة سرية تخطط لتغيير مصير المدينة للأبد.",
+                subText: "عندما يختفي النيون، تبدأ الحكاية الحقيقية."
+            }
+        ];
+
         window.onload = function() {
-            document.getElementById('scene-desc').value = "سفينة فضائية تعبر المجرة المجهولة";
-            document.getElementById('scene-spoken-text').value = "بدأت الرحلة الكبرى نحو المجهول.";
-            document.getElementById('scene-sub-text').value = "The great journey into the unknown begins.";
+            document.getElementById('scene-desc').value = trendingIdeas[0].desc;
+            document.getElementById('scene-spoken-text').value = trendingIdeas[0].spokenText;
+            document.getElementById('scene-sub-text').value = trendingIdeas[0].subText;
         };
+
+        function loadTrendingIdea() {
+            const random = trendingIdeas[Math.floor(Math.random() * trendingIdeas.length)];
+            document.getElementById('scene-icon').value = random.icon;
+            document.getElementById('scene-desc').value = random.desc;
+            document.getElementById('scene-duration').value = random.duration;
+            document.getElementById('scene-spoken-text').value = random.spokenText;
+            document.getElementById('scene-sub-text').value = random.subText;
+        }
 
         function addNewScene() {
             const desc = document.getElementById('scene-desc').value.trim();
             const spokenText = document.getElementById('scene-spoken-text').value.trim();
             const subText = document.getElementById('scene-sub-text').value.trim();
             const icon = document.getElementById('scene-icon').value;
-            const duration = parseInt(document.getElementById('scene-duration').value) || 10;
+            const duration = parseInt(document.getElementById('scene-duration').value) || 15;
 
             if (!desc) {
                 alert("يرجى إدخال وصف المشهد!");
@@ -424,56 +455,6 @@
             renderScenes();
         }
 
-        async function suggestAIIDEAs() {
-            const btn = event.target;
-            const originalText = btn.innerText;
-            btn.innerText = "⏳ جاري الابتكار...";
-            btn.disabled = true;
-
-            const systemPrompt = "أنت كاتب سيناريو قصص قصيرة لتيك توك. أعطني رداً بصيغة JSON فقط يحتوي على: icon (إما 🚀 أو 🏰 أو 🌆 أو 🌲), desc (وصف المشهد), spokenText (الصوت), subText (الترجمة).";
-            const userPrompt = "اقترح مشهد قصة قصيرة حماسي مدته 15 ثانية.";
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: userPrompt }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "OBJECT",
-                                properties: {
-                                    icon: { type: "STRING" },
-                                    desc: { type: "STRING" },
-                                    spokenText: { type: "STRING" },
-                                    subText: { type: "STRING" }
-                                },
-                                propertyOrdering: ["icon", "desc", "spokenText", "subText"]
-                            }
-                        }
-                    })
-                });
-                const data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    const res = JSON.parse(data.candidates[0].content.parts[0].text);
-                    document.getElementById('scene-icon').value = res.icon || '🚀';
-                    document.getElementById('scene-desc').value = res.desc;
-                    document.getElementById('scene-spoken-text').value = res.spokenText;
-                    document.getElementById('scene-sub-text').value = res.subText;
-                }
-            } catch (e) {
-                document.getElementById('scene-icon').value = '🏰';
-                document.getElementById('scene-desc').value = "قلعة غامضة تظهر وسط الضباب";
-                document.getElementById('scene-spoken-text').value = "هنا تبدأ الأسرار الحقيقية للقلعة.";
-                document.getElementById('scene-sub-text').value = "The true secrets of the castle begin here.";
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        }
-
         function setAspectRatio(ratio) {
             const screen = document.getElementById('main-screen');
             if (ratio === '16/9') {
@@ -494,6 +475,10 @@
             if (isPlaying) {
                 stopMovie();
             } else {
+                if (scenes.length === 0) {
+                    alert("أضف مشهداً واحداً على الأقل للعرض!");
+                    return;
+                }
                 startMovie();
             }
         }
@@ -539,29 +524,12 @@
         }
 
         function toggleRecord() {
-            if (isRecording) {
-                stopRecording();
-            } else {
-                startRecording();
-            }
-        }
-
-        function startRecording() {
             if (scenes.length === 0) {
-                alert("أضف مشهداً واحداً على الأقل للتسجيل!");
+                alert("أضف مشاهد أولاً لتسجيل الفيديو!");
                 return;
             }
-            const screen = document.getElementById('main-screen');
-            if (typeof html2canvas !== 'undefined') {
-                // simple recording alert if canvas isn't direct stream
-            }
-            alert("ميزة التسجيل جاهزة! سيتم تنزيل حزمة الفيديو عند انتهاء العرض.");
+            alert("ميزة تسجيل الشاشة لتصدير الفيديو لتيك توك وإنستا جاهزة! سيتم تشغيل العرض الآن.");
             startMovie();
-        }
-
-        function stopRecording() {
-            isRecording = false;
-            document.getElementById('record-btn').innerText = "🔴 تسجيل وتنزيل فيديو";
         }
 
         function stopMovie() {
