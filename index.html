@@ -235,7 +235,7 @@
     <header>
         <div class="logo-title">
             <h1>🎬 Series & Story 3D Studio</h1>
-            <p>Live Visual Animation & Voiceover for TikTok/Reels</p>
+            <p>Live Visual Animation & Voiceover</p>
         </div>
         <div class="nav-btns">
             <button class="btn btn-primary" onclick="showTab('editor')">📝 Script Editor</button>
@@ -251,7 +251,7 @@
                     <div class="card">
                         <h2>Series Settings</h2>
                         <div class="form-group">
-                            <label>Series or Episode Title</label>
+                            <label>Series Title</label>
                             <input type="text" id="series-title" value="The Great Escape Adventure">
                         </div>
                         <div class="form-group">
@@ -269,30 +269,30 @@
                         <div class="form-group">
                             <label>Visual Animation Type</label>
                             <select id="scene-type">
-                                <option value="running">🏃 Running Character & Action Chase</option>
-                                <option value="space">🚀 Deep Space Galaxy & Flying Ships</option>
+                                <option value="running">🏃 Running Character & Chase Action</option>
+                                <option value="space">🚀 Deep Space Galaxy & Planets</option>
                                 <option value="fantasy">🏰 Magical Castle & Floating Orbs</option>
                                 <option value="cyber">🌆 Cyberpunk Neon City</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Scene Visual Title</label>
-                            <textarea id="scene-desc" rows="2" placeholder="Describe what happens visually..."></textarea>
+                            <textarea id="scene-desc" rows="2" placeholder="Describe visual scene..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Duration in Seconds (Make it 20-30s for long shorts)</label>
+                            <label>Duration in Seconds (20-30s+ for long shorts)</label>
                             <input type="number" id="scene-duration" value="20" min="5" max="60">
                         </div>
                         <div class="form-group">
-                            <label>🔊 Spoken Voiceover Text (English Speech)</label>
-                            <textarea id="scene-spoken-text" rows="3" placeholder="Text to be spoken by AI voice..."></textarea>
+                            <label>🔊 Spoken Voiceover Text</label>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="Text spoken by voice engine..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label>💬 Subtitle Text (Bottom screen text)</label>
-                            <textarea id="scene-sub-text" rows="3" placeholder="Text to show at the bottom..."></textarea>
+                            <label>💬 Subtitle Text (Bottom Screen)</label>
+                            <textarea id="scene-sub-text" rows="3" placeholder="Subtitle text..."></textarea>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Scene to List</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Scene</button>
                             <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 Ready Story Idea</button>
                         </div>
                     </div>
@@ -305,7 +305,7 @@
                             <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeAllScenes()">Clear All</button>
                         </div>
                         <div id="scenes-list">
-                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">No scenes added yet! Click Ready Story Idea or add your own.</p>
+                            <p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">No scenes added yet!</p>
                         </div>
                     </div>
                 </div>
@@ -335,7 +335,7 @@
                     <div>
                         <select id="voice-lang" onchange="changeLang()" style="background:#0b0f19; color:#fff; border:1px solid #1e2d4a; padding:6px; border-radius:6px; font-size:0.8rem;">
                             <option value="en-US">Voice: English 🇺🇸</option>
-                            <option value="ar-SA">الصوت: عربي 🇸🇦</option>
+                            <option value="ar-SA">Voice: Arabic 🇸🇦</option>
                         </select>
                     </div>
                 </div>
@@ -350,7 +350,6 @@
         let playTimer = null;
         let currentLang = 'en-US';
         let canvas, ctx, animFrameId;
-        let runnerX = 50;
 
         const trendingIdeas = [
             {
@@ -383,9 +382,13 @@
             loadTrendingIdea();
         };
 
+        window.onresize = resizeCanvas;
+
         function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+            if (!canvas) return;
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth || 380;
+            canvas.height = parent.clientHeight || 675;
         }
 
         function loadTrendingIdea() {
@@ -460,7 +463,7 @@
             } else {
                 screen.classList.remove('landscape');
             }
-            setTimeout(resizeCanvas, 100);
+            setTimeout(resizeCanvas, 150);
         }
 
         function startMovie() {
@@ -530,50 +533,72 @@
                 if (!isPlaying) return;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+                const w = canvas.width;
+                const h = canvas.height;
+
                 if (type === 'running') {
                     // Background
                     ctx.fillStyle = '#0f172a';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillRect(0, 0, w, h);
 
-                    // Ground
+                    // Ground moving lines
                     ctx.fillStyle = '#1e293b';
-                    ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                    ctx.fillRect(0, h - 90, w, 90);
+                    ctx.fillStyle = '#334155';
+                    let offset = (Date.now() * 0.3) % 40;
+                    for (let x = -offset; x < w; x += 40) {
+                        ctx.fillRect(x, h - 90, 20, 5);
+                    }
 
-                    // Running Character Animation (Running Man)
-                    const rx = canvas.width / 2 + Math.sin(Date.now() * 0.01) * 25;
-                    const ry = canvas.height - 130;
+                    // Running Character Animation (Clear stickman/runner in action)
+                    const rx = w / 2;
+                    const ry = h - 140;
 
                     // Head
                     ctx.fillStyle = '#f59e0b';
-                    ctx.beginPath(); ctx.arc(rx, ry - 25, 12, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(rx, ry - 30, 14, 0, Math.PI * 2); ctx.fill();
                     // Body
-                    ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 4;
-                    ctx.beginPath(); ctx.moveTo(rx, ry - 13); ctx.lineTo(rx, ry + 20); ctx.stroke();
-                    // Legs animation
-                    const legAngle = Math.sin(Date.now() * 0.02) * 18;
+                    ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 5;
+                    ctx.beginPath(); ctx.moveTo(rx, ry - 16); ctx.lineTo(rx, ry + 25); ctx.stroke();
+                    // Arms swinging
+                    const armAngle = Math.sin(Date.now() * 0.02) * 20;
                     ctx.beginPath();
-                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx - 18 + legAngle, ry + 55);
-                    ctx.moveTo(rx, ry + 20); ctx.lineTo(rx + 18 - legAngle, ry + 55);
+                    ctx.moveTo(rx, ry - 5); ctx.lineTo(rx - 20 + armAngle, ry + 10);
+                    ctx.moveTo(rx, ry - 5); ctx.lineTo(rx + 20 - armAngle, ry + 10);
+                    ctx.stroke();
+                    // Legs running animation
+                    const legAngle = Math.sin(Date.now() * 0.02) * 25;
+                    ctx.beginPath();
+                    ctx.moveTo(rx, ry + 25); ctx.lineTo(rx - 22 + legAngle, ry + 70);
+                    ctx.moveTo(rx, ry + 25); ctx.lineTo(rx + 22 - legAngle, ry + 70);
                     ctx.stroke();
 
                 } else if (type === 'space') {
                     ctx.fillStyle = '#020617';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillRect(0, 0, w, h);
                     ctx.fillStyle = '#ffffff';
-                    for(let i=0; i<60; i++) {
-                        let sx = (i * 37 + Date.now() * 0.08) % canvas.width;
-                        let sy = (i * 53) % canvas.height;
+                    for(let i=0; i<70; i++) {
+                        let sx = (i * 37 + Date.now() * 0.1) % w;
+                        let sy = (i * 53) % h;
                         ctx.fillRect(sx, sy, 3, 3);
                     }
+                    // Planet
                     ctx.fillStyle = '#3b82f6';
-                    ctx.beginPath(); ctx.arc(canvas.width / 2, canvas.height / 2, 70, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(w / 2, h / 2, 75, 0, Math.PI * 2); ctx.fill();
+                    // Ring
+                    ctx.strokeStyle = '#93c5fd'; ctx.lineWidth = 6;
+                    ctx.beginPath(); ctx.ellipse(w / 2, h / 2, 110, 35, Math.PI / 6, 0, Math.PI * 2); ctx.stroke();
 
                 } else {
                     ctx.fillStyle = '#311042';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillRect(0, 0, w, h);
                     ctx.fillStyle = '#fbbf24';
-                    ctx.font = "45px sans-serif";
-                    ctx.fillText("🏰 ✨", canvas.width / 2 - 40, canvas.height / 2);
+                    ctx.font = "bold 45px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("🏰 ✨", w / 2, h / 2 - 10);
+                    ctx.font = "16px sans-serif";
+                    ctx.fillStyle = "#e2e8f0";
+                    ctx.fillText("Magical Castle & Floating Realm", w / 2, h / 2 + 30);
                 }
 
                 animFrameId = requestAnimationFrame(draw);
@@ -586,7 +611,7 @@
                 alert("Please add scenes before recording!");
                 return;
             }
-            alert("Starting movie playback for screen recording to export to TikTok/Reels!");
+            alert("Starting playback for screen recording to export to TikTok/Reels!");
             startMovie();
         }
 
