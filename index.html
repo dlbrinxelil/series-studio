@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Motion Video Studio Pro</title>
+    <title>Cinematic 3D Shorts Studio Pro (Paid Edition)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +14,7 @@
         }
 
         body {
-            background-color: #0b0f19;
+            background-color: #070913;
             color: #f8fafc;
             min-height: 100vh;
             display: flex;
@@ -21,7 +22,7 @@
         }
 
         header {
-            background-color: #151d2a;
+            background-color: #0f172a;
             border-bottom: 1px solid #1e293b;
             padding: 12px 20px;
             display: flex;
@@ -32,6 +33,9 @@
         .logo-title h1 {
             font-size: 1.1rem;
             color: #f43f5e;
+            background: linear-gradient(90deg, #f43f5e, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .logo-title p {
             font-size: 0.75rem;
@@ -82,8 +86,8 @@
         }
 
         .card {
-            background-color: #131b2e;
-            border: 1px solid #1e2d4a;
+            background-color: #111827;
+            border: 1px solid #1f2937;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 16px;
@@ -106,8 +110,8 @@
         }
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            background-color: #0b0f19;
-            border: 1px solid #1e2d4a;
+            background-color: #030712;
+            border: 1px solid #1f2937;
             color: #fff;
             padding: 8px 12px;
             border-radius: 6px;
@@ -116,8 +120,8 @@
         }
 
         .scene-item {
-            background-color: #0b0f19;
-            border: 1px solid #1e2d4a;
+            background-color: #030712;
+            border: 1px solid #1f2937;
             border-radius: 8px;
             padding: 10px;
             margin-bottom: 10px;
@@ -158,21 +162,17 @@
             justify-content: center;
             align-items: center;
             border: 2px solid #e11d48;
-            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3);
+            box-shadow: 0 15px 40px rgba(225, 29, 72, 0.4);
         }
         .screen.landscape {
             max-width: 640px;
             aspect-ratio: 16/9;
         }
 
-        #cinematic-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 1;
+        #three-canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
         }
 
         .screen-ratio-btn {
@@ -190,16 +190,16 @@
             bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             color: #fef08a;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-size: 0.95rem;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 1rem;
             font-weight: bold;
             text-align: center;
             max-width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.9);
             z-index: 10;
         }
 
@@ -208,22 +208,23 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             color: #ffffff;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: bold;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
             z-index: 10;
             width: 90%;
             text-align: center;
+            border-bottom: 2px solid #f43f5e;
         }
 
         .controls {
             width: 100%;
-            background-color: #131b2e;
-            padding: 12px;
+            background-color: #111827;
+            padding: 14px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
@@ -237,17 +238,19 @@
             display: none !important;
         }
     </style>
+    <!-- Three.js 3D Pro Engine Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
     <header>
         <div class="logo-title">
-            <h1>🎬 Cinematic Motion Video Studio</h1>
-            <p>Real HD Video Backgrounds & Custom Voice Recording</p>
+            <h1>🎬 Cinematic 3D Shorts Pro</h1>
+            <p>Advanced 3D WebGL Engine & Deep Voice Over</p>
         </div>
         <div class="nav-btns">
             <button class="btn btn-primary" onclick="showTab('editor')">📝 Script Editor</button>
-            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ Play Series Video</button>
+            <button class="btn" id="player-tab-btn" onclick="showTab('player')">▶️ Play 3D Movie</button>
         </div>
     </header>
 
@@ -260,18 +263,18 @@
                         <h2>Series Settings</h2>
                         <div class="form-group">
                             <label>Series Title</label>
-                            <input type="text" id="series-title" value="Cinematic Shorts Epic">
+                            <input type="text" id="series-title" value="Pro 3D Cinematic Story">
                         </div>
                     </div>
 
                     <div class="card">
-                        <h2>Add Cinematic Video Scene (30+ Secs)</h2>
+                        <h2>Add 3D Pro Scene (30+ Secs)</h2>
                         <div class="form-group">
-                            <label>Cinematic Video Background Theme</label>
-                            <select id="scene-video-theme">
-                                <option value="space">🚀 Deep Space Galaxy Warp (HD Video)</option>
-                                <option value="cyber">🌆 Cyberpunk Neon City Rain (HD Video)</option>
-                                <option value="fantasy">🏰 Dark Fantasy Mystic Forest (HD Video)</option>
+                            <label>3D Pro Environment</label>
+                            <select id="scene-theme">
+                                <option value="space">🚀 3D Deep Space Warp & Rings Galaxy</option>
+                                <option value="cyber">🌆 3D Cyberpunk Matrix Grid & Neon Towers</option>
+                                <option value="fantasy">🏰 3D Magical Floating Floating Citadel</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -283,16 +286,16 @@
                             <input type="number" id="scene-duration" value="25" min="5" max="60">
                         </div>
                         <div class="form-group">
+                            <label>🔊 Deep Male Voiceover Text (English)</label>
+                            <textarea id="scene-spoken-text" rows="3" placeholder="Voice text in English..."></textarea>
+                        </div>
+                        <div class="form-group">
                             <label>💬 Subtitle Text (Shown on Screen)</label>
                             <textarea id="scene-sub-text" rows="3" placeholder="Subtitles in English..."></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>🎵 Upload Your Real Recorded Voice (MP3/WAV from Phone - Recommended)</label>
-                            <input type="file" id="custom-audio-file" accept="audio/*">
-                        </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add Video Scene</button>
-                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 Ready Video Story Idea</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="addNewScene()">+ Add 3D Pro Scene</button>
+                            <button class="btn" style="background:#8b5cf6;" onclick="loadTrendingIdea()">💡 Pro Story Idea</button>
                         </div>
                     </div>
                 </div>
@@ -319,14 +322,14 @@
                     <button class="screen-ratio-btn" onclick="setAspectRatio('16/9')">💻 YouTube Landscape (16:9)</button>
                 </div>
                 <div class="screen" id="main-screen">
-                    <video id="cinematic-video" autoplay muted loop playsinline></video>
+                    <canvas id="three-canvas"></canvas>
                     <div id="scene-title-overlay" class="scene-overlay-title"></div>
                     <div id="play-sub" class="subtitles">...</div>
                 </div>
 
                 <div class="controls">
                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">Play Video ▶️</button>
+                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">Play 3D Pro ▶️</button>
                         <button class="btn" style="background:#16a34a;" id="record-btn" onclick="toggleRecord()">🔴 Record & Download</button>
                         <button class="btn" onclick="prevScene()">Prev</button>
                         <button class="btn" onclick="nextScene()">Next</button>
@@ -341,59 +344,131 @@
         let currentIndex = 0;
         let isPlaying = false;
         let playTimer = null;
-        let currentAudioPlayer = null;
 
-        // Real Cinematic High Quality HD Stock Video URLs
-        const videoThemes = {
-            space: "https://assets.mixkit.co/videos/preview/mixkit-space-flight-through-a-galaxy-of-stars-42111-large.mp4",
-            cyber: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-with-code-31910-large.mp4",
-            fantasy: "https://assets.mixkit.co/videos/preview/mixkit-mysterious-forest-with-mist-and-light-rays-41682-large.mp4"
-        };
+        // Three.js Pro Variables
+        let scene3D, camera3D, renderer3D, anim3DId;
+        let meshGroup = new THREE.Group();
 
         const trendingIdeas = [
             {
                 theme: "cyber",
-                desc: "The Cyberpunk Neon Grid Chase",
+                desc: "The Cyberpunk Matrix Overdrive",
                 duration: 25,
-                subText: "Running for survival through the quantum cyber grid..."
+                spokenText: "Navigating through the high-security quantum cyber grid where digital towers pulse with rogue energy.",
+                subText: "Navigating through the quantum cyber grid..."
             },
             {
                 theme: "space",
-                desc: "Deep Space Wormhole Warp",
+                desc: "Deep Space Superluminal Jump",
                 duration: 25,
-                subText: "Wormhole jump initiated. Entering galaxy X..."
+                spokenText: "Warp speed engaged across rotating 3D planetary rings into an unknown alternate dimension.",
+                subText: "Warp speed engaged. Entering alternate dimension..."
             },
             {
                 theme: "fantasy",
-                desc: "The Mystic Forest Awakening",
+                desc: "Awakening the Floating Crystal Citadel",
                 duration: 25,
-                subText: "Unlocking ancient secrets hidden deep within the fog..."
+                spokenText: "High above the stormy clouds, ancient magical structures resonate with supreme cosmic power.",
+                subText: "Ancient magical structures awakening..."
             }
         ];
 
         window.onload = function() {
+            init3DProEngine();
             loadTrendingIdea();
         };
 
+        function init3DProEngine() {
+            const canvas = document.getElementById('three-canvas');
+            renderer3D = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer3D.setSize(380, 675);
+            renderer3D.setPixelRatio(window.devicePixelRatio);
+
+            scene3D = new THREE.Scene();
+            camera3D = new THREE.PerspectiveCamera(60, 380 / 675, 0.1, 1000);
+            camera3D.position.z = 12;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+            scene3D.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xf43f5e, 2.5);
+            dirLight.position.set(5, 12, 8);
+            scene3D.add(dirLight);
+
+            scene3D.add(meshGroup);
+        }
+
+        function build3DProWorld(theme) {
+            while(meshGroup.children.length > 0) {
+                meshGroup.remove(meshGroup.children[0]);
+            }
+
+            if (theme === 'space') {
+                scene3D.background = new THREE.Color(0x020617);
+                const pGeo = new THREE.SphereGeometry(3.2, 32, 32);
+                const pMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.2, metalness: 0.5 });
+                const planet = new THREE.Mesh(pGeo, pMat);
+                meshGroup.add(planet);
+
+                const ringGeo = new THREE.RingGeometry(4.5, 6.2, 32);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x60a5fa, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2.5;
+                planet.add(ring);
+
+            } else if (theme === 'cyber') {
+                scene3D.background = new THREE.Color(0x030712);
+                for(let i = -3; i <= 3; i += 1.5) {
+                    const cGeo = new THREE.BoxGeometry(1.2, Math.random() * 8 + 3, 1.2);
+                    const cMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, wireframe: true, emissive: 0x0891b2 });
+                    const col = new THREE.Mesh(cGeo, cMat);
+                    col.position.set(i * 1.6, -1.5, Math.random() * -3);
+                    meshGroup.add(col);
+                }
+
+            } else if (theme === 'fantasy') {
+                scene3D.background = new THREE.Color(0x1e1b4b);
+                const cGeo = new THREE.CylinderGeometry(1.2, 1.8, 4, 16);
+                const cMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.3, metalness: 0.6 });
+                const castle = new THREE.Mesh(cGeo, cMat);
+                meshGroup.add(castle);
+
+                for(let i = 0; i < 6; i++) {
+                    const oGeo = new THREE.SphereGeometry(0.4, 16, 16);
+                    const oMat = new THREE.MeshStandardMaterial({ color: 0xc084fc, emissive: 0x9333ea });
+                    const orb = new THREE.Mesh(oGeo, oMat);
+                    orb.position.set(Math.sin(i) * 3.8, Math.cos(i) * 2.2, Math.sin(i * 2) * 2);
+                    meshGroup.add(orb);
+                }
+            }
+        }
+
+        function animate3DPro() {
+            if (!isPlaying) return;
+            anim3DId = requestAnimationFrame(animate3DPro);
+
+            meshGroup.rotation.y += 0.012;
+            meshGroup.rotation.x = Math.sin(Date.now() * 0.001) * 0.12;
+            camera3D.position.z = 10 + Math.sin(Date.now() * 0.002) * 1.2;
+
+            renderer3D.render(scene3D, camera3D);
+        }
+
         function loadTrendingIdea() {
             const random = trendingIdeas[Math.floor(Math.random() * trendingIdeas.length)];
-            document.getElementById('scene-video-theme').value = random.theme;
+            document.getElementById('scene-theme').value = random.theme;
             document.getElementById('scene-desc').value = random.desc;
             document.getElementById('scene-duration').value = random.duration;
+            document.getElementById('scene-spoken-text').value = random.spokenText;
             document.getElementById('scene-sub-text').value = random.subText;
         }
 
         function addNewScene() {
             const desc = document.getElementById('scene-desc').value.trim();
+            const spokenText = document.getElementById('scene-spoken-text').value.trim();
             const subText = document.getElementById('scene-sub-text').value.trim();
-            const theme = document.getElementById('scene-video-theme').value;
+            const theme = document.getElementById('scene-theme').value;
             const duration = parseInt(document.getElementById('scene-duration').value) || 25;
-            const audioInput = document.getElementById('custom-audio-file');
-            
-            let audioUrl = null;
-            if (audioInput.files && audioInput.files[0]) {
-                audioUrl = URL.createObjectURL(audioInput.files[0]);
-            }
 
             if (!desc) {
                 alert("Please enter a scene description!");
@@ -402,15 +477,15 @@
 
             scenes.push({
                 desc: desc,
-                subText: subText || desc,
+                spokenText: spokenText || desc,
+                subText: subText || spokenText || desc,
                 theme: theme,
-                duration: duration,
-                audioUrl: audioUrl
+                duration: duration
             });
 
             document.getElementById('scene-desc').value = '';
+            document.getElementById('scene-spoken-text').value = '';
             document.getElementById('scene-sub-text').value = '';
-            audioInput.value = '';
             renderScenes();
         }
 
@@ -419,15 +494,15 @@
             document.getElementById('scenes-count').innerText = scenes.length;
 
             if (scenes.length === 0) {
-                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">No video scenes added yet!</p>';
+                list.innerHTML = '<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 20px;">No scenes added yet!</p>';
                 return;
             }
 
             list.innerHTML = scenes.map((sc, i) => `
                 <div class="scene-item">
                     <div class="scene-info">
-                        <strong>Video Scene #${i + 1} (${sc.duration}s - ${sc.theme})</strong>
-                        <p>${sc.desc} ${sc.audioUrl ? '🎵 (Custom Audio)' : ''}</p>
+                        <strong>3D Pro Scene #${i + 1} (${sc.duration}s - ${sc.theme})</strong>
+                        <p>${sc.desc}</p>
                     </div>
                     <button class="btn" style="background: transparent; color: #f43f5e;" onclick="deleteScene(${i})">🗑️</button>
                 </div>
@@ -446,11 +521,18 @@
 
         function setAspectRatio(ratio) {
             const screen = document.getElementById('main-screen');
+            const w = ratio === '16/9' ? 640 : 380;
+            const h = ratio === '16/9' ? 360 : 675;
+
             if (ratio === '16/9') {
                 screen.classList.add('landscape');
             } else {
                 screen.classList.remove('landscape');
             }
+
+            renderer3D.setSize(w, h);
+            camera3D.aspect = w / h;
+            camera3D.updateProjectionMatrix();
         }
 
         function startMovie() {
@@ -492,25 +574,15 @@
         function renderFrame() {
             if (scenes.length === 0) return;
             const sc = scenes[currentIndex];
-            const videoElem = document.getElementById('cinematic-video');
 
             document.getElementById('scene-title-overlay').innerText = sc.desc;
             document.getElementById('play-sub').innerText = sc.subText;
 
-            // Load and play real cinematic video background
-            videoElem.src = videoThemes[sc.theme] || videoThemes.space;
-            videoElem.play().catch(e => console.log("Video play error:", e));
+            build3DProWorld(sc.theme);
+            if (anim3DId) cancelAnimationFrame(anim3DId);
+            animate3DPro();
 
-            // Handle Custom Audio Recording
-            if (currentAudioPlayer) {
-                currentAudioPlayer.pause();
-                currentAudioPlayer = null;
-            }
-
-            if (sc.audioUrl) {
-                currentAudioPlayer = new Audio(sc.audioUrl);
-                currentAudioPlayer.play();
-            }
+            speakProDeepMale(sc.spokenText);
         }
 
         function toggleRecord() {
@@ -518,21 +590,16 @@
                 alert("Please add scenes before recording!");
                 return;
             }
-            alert("Starting video playback for screen recording to export to TikTok/Reels!");
+            alert("Starting 3D Pro playback for screen recording to export to TikTok/Reels!");
             startMovie();
         }
 
         function stopMovie() {
             isPlaying = false;
             clearTimeout(playTimer);
-            const videoElem = document.getElementById('cinematic-video');
-            videoElem.pause();
-
-            if (currentAudioPlayer) {
-                currentAudioPlayer.pause();
-                currentAudioPlayer = null;
-            }
-            document.getElementById('play-btn').innerText = "Play Video ▶️";
+            if (anim3DId) cancelAnimationFrame(anim3DId);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            document.getElementById('play-btn').innerText = "Play 3D Pro ▶️";
         }
 
         function nextScene() {
@@ -546,6 +613,22 @@
             if (currentIndex > 0) {
                 currentIndex--;
                 renderFrame();
+            }
+        }
+
+        function speakProDeepMale(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = 'en-US';
+                speech.rate = 0.88;
+                speech.pitch = 0.05; // Maximum deep male pitch
+                
+                const voices = window.speechSynthesis.getVoices();
+                const bestVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Male')));
+                if (bestVoice) speech.voice = bestVoice;
+
+                window.speechSynthesis.speak(speech);
             }
         }
 
@@ -570,3 +653,4 @@
     </script>
 </body>
 </html>
+```
